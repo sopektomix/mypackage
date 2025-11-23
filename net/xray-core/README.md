@@ -1,2 +1,0 @@
-# xraycore-vlessws
-
