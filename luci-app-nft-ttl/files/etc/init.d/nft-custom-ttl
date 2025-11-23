@@ -1,0 +1,47 @@
+#!/bin/sh /etc/rc.common
+# NFT TTL64 Controller (IPv4+IPv6)
+# Integrated for luci-app-nft-ttl by SopekSemprit
+# Base: ttl64ipv4v6.nft + UCI control
+
+START=99
+USE_PROCD=1
+PROG=/usr/sbin/nft
+NFT_FILE="/tmp/ttl64ipv4v6.nft"
+
+start_service() {
+	enable=$(uci get nftttl.settings.enable 2>/dev/null)
+	value=$(uci get nftttl.settings.ttl_value 2>/dev/null)
+	[ -z "$value" ] && value=64
+
+	if [ "$enable" = "1" ]; then
+		logger -t nftttl "Starting TTL changer (IPv4+IPv6) with TTL=$value"
+
+		# Write dynamic nft rules
+		cat <<EOF > $NFT_FILE
+table inet ttlcontrol {
+	chain mangle_forward {
+		type filter hook forward priority mangle; policy accept;
+		oifname "wwan0_1" ip ttl set $value
+		oifname "wwan0_1" ip6 hoplimit set $value
+	}
+}
+EOF
+
+		# Flush and load ruleset
+		$PROG flush table inet ttlcontrol 2>/dev/null
+		$PROG -f $NFT_FILE
+	else
+		logger -t nftttl "TTL changer disabled"
+		$PROG flush table inet ttlcontrol 2>/dev/null
+	fi
+}
+
+stop_service() {
+	logger -t nftttl "Stopping TTL changer"
+	$PROG flush table inet ttlcontrol 2>/dev/null
+}
+
+reload_service() {
+	stop_service
+	start_service
+}
