@@ -1,0 +1,126 @@
+#!/bin/sh
+
+# Copyright 2006 OpenWrt.org
+# Copyright 2024-2025 sopeksemprit <sopeksemprit.xyz>
+
+NAME=familycontrol
+IDLIST="/var/$NAME.idlist"
+TMPID="/var/$NAME.tmpid"
+
+# Pastikan directory wujud dan kosongkan senarai ID pada setiap start
+[ -d /var ] || mkdir -p /var
+: >"$IDLIST"
+: >"$TMPID"
+
+config_get_type() {
+	local ret
+	ret=$(uci -q get "${NAME}.${1}")
+	echo "${ret:=$2}"
+}
+
+config_n_get() {
+	local ret
+	ret=$(uci -q get "${NAME}.${1}.${2}")
+	echo "${ret:=$3}"
+}
+
+config_t_get() {
+	local index=${3:-0}
+	local ret
+	ret=$(uci -q get "${NAME}.@${1}[${index}].${2}")
+	echo "${ret:=${4}}"
+}
+
+config_t_set() {
+	local index=${4:-0}
+	uci -q set "${NAME}.@${1}[${index}].${2}=${3}"
+}
+
+is_time_in_range() {
+	local start_time=$1
+	local end_time=$2
+	local current_time
+	current_time=$(date +%H:%M)
+
+	if [ "$start_time" = "$end_time" ]; then
+		# 24 jam aktif
+		return 0
+	elif [ "$start_time" \< "$end_time" ]; then
+		[ "$current_time" \> "$start_time" ] && [ "$current_time" \< "$end_time" ] && return 0
+	else
+		# cross midnight
+		[ "$current_time" \> "$start_time" ] || [ "$current_time" \< "$end_time" ] && return 0
+	fi
+	return 1
+}
+
+is_weekday_in_range() {
+	local configured_weekdays=$1
+	local current_weekday
+	current_weekday=$(date +%u)
+
+	for ww in $(echo "$configured_weekdays" | sed 's/,/ /g'); do
+		if [ "$current_weekday" = "$ww" ] || [ "$ww" = "0" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+check_device() {
+	local id=$1
+	local start_time end_time weekdays
+
+	start_time=$(config_t_get device timestart "$id")
+	end_time=$(config_t_get device timeend "$id")
+	weekdays=$(config_t_get device week "$id")
+
+	if is_weekday_in_range "$weekdays" && is_time_in_range "$start_time" "$end_time"; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+update_device_status() {
+	local id=$1
+	local action=$2
+
+	if [ "$action" = "add" ]; then
+		familycontrol add "$id"
+		echo "!${id}!" >>"$IDLIST"
+	elif [ "$action" = "del" ]; then
+		familycontrol del "$id"
+		sed -i "/!$id!/d" "$IDLIST" >/dev/null 2>&1
+	fi
+}
+
+process_devices() {
+	[ -e "$IDLIST" ] || touch "$IDLIST"
+
+	# Recalculate enabled devices every cycle to react fast to config toggles
+	local idlist
+	idlist=$(uci show "$NAME" 2>/dev/null | grep "enable='1'" | grep "device" | grep -oE '\[[0-9]+\]' | grep -o '[0-9]')
+
+	for id in $idlist; do
+		if check_device "$id"; then
+			if ! grep -q "!${id}!" "$IDLIST"; then
+				update_device_status "$id" "add"
+			fi
+		else
+			if grep -q "!${id}!" "$IDLIST"; then
+				update_device_status "$id" "del"
+			fi
+		fi
+	done
+
+	cat "$IDLIST" | sort | uniq >"$TMPID"
+	mv "$TMPID" "$IDLIST"
+}
+
+while :; do
+	process_devices
+	# shorter interval untuk rasa recover lebih cepat
+	sleep 20
+done
+

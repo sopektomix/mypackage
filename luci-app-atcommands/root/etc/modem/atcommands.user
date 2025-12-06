@@ -1,0 +1,102 @@
+==== System Information ====
+Show ATI Information ;ATI
+Show IMSI Number ;AT+CIMI
+Check Current IMEI ;AT+CGSN
+Check Phone Number ;AT+CNUM
+Show Firmware Version ;AT+QGMR
+Show Hardware Revision ;AT+QHWREV
+Show SIM Status ;AT+CPIN?
+Show Temperature ;AT+QTEMP
+Show Module Model ;AT+GMM
+Show Manufacturer ;AT+GMI
+
+==== Signal & Cell Information ====
+Basic Signal Strength ;AT+CSQ
+Serving + Neighbour Cells ;AT+QENG="neighbourcell"
+Serving Cell Info (NR/LTE) ;AT+QENG="servingcell"
+Show Network Information ;AT+QNWINFO
+Show CA Status ;AT+QCAINFO
+Show Current LTE/NR Band ;AT+QBAND?
+Show Operator Name ;AT+COPS?
+
+==== Network Mode Selection ====
+Display Current Preferred Mode ;AT+QNWPREFCFG="mode_pref"
+Lock to NSA (5G+LTE) ;AT+QNWPREFCFG="mode_pref",NR5G:LTE
+Lock to SA Only (5G) ;AT+QNWPREFCFG="mode_pref",NR5G
+Lock to LTE Only ;AT+QNWPREFCFG="mode_pref",LTE
+Enable Automatic Mode Selection ;AT+QNWPREFCFG="mode_pref",AUTO
+
+==== USB Interface Mode ====
+Check Current USB Mode ;AT+QCFG="usbnet"
+Use QMI Mode ;AT+QCFG="usbnet",0
+Use ECM Mode ;AT+QCFG="usbnet",1
+Use MBIM Mode ;AT+QCFG="usbnet",2
+Use RNDIS Mode ;AT+QCFG="usbnet",3
+
+==== Module Power Control ====
+Turn Off Modem ;AT+CFUN=0
+Turn On Modem ;AT+CFUN=1
+Restart Modem (Normal) ;AT+CFUN=1,1
+Restart Modem (Full Reset) ;AT+RESET
+Enable Airplane Mode ;AT+CFUN=4
+
+==== Temporary (reset after reboot) ====
+Show PCI Lock Options ;AT+QNWLOCK=?
+Lock 4G PCI ;AT+QNWLOCK="common/4g",1,<earfcn>,<pci>
+Remove 4G PCI Lock ;AT+QNWLOCK="common/4g",0
+Lock 5G PCI (SA) ;AT+QNWLOCK="common/5g",<pci>,<arfcn>,<scs>,<band>
+Remove 5G PCI Lock (SA) ;AT+QNWLOCK="common/5g",0
+
+==== Permanent (saved across reboot) ====
+Save Current PCI Lock ;AT+QNWLOCK="save_ctrl",1,1
+Reset PCI Lock ;AT+QNWLOCK="save_ctrl",1,0
+
+==== Band Locking ====
+Show Supported Bands ;AT+QNWPREFCFG="policy_band"
+Lock LTE Bands ;AT+QNWPREFCFG="lte_band",<bandmask>
+Lock NR5G Bands ;AT+QNWPREFCFG="nr5g_band",<bandmask>
+Clear LTE Band Locks ;AT+QNWPREFCFG="lte_band",0
+Clear NR5G Band Locks ;AT+QNWPREFCFG="nr5g_band",0
+
+==== IMS / VoLTE ====
+Enable VoLTE ;AT+QCFG="ims",1
+Disable VoLTE ;AT+QCFG="ims",0
+Check VoLTE State ;AT+QCFG="ims"
+Enable NR5G SA Capability ;AT+QNWPREFCFG="nsa_nr5g_pref",1
+Disable NR5G SA Capability ;AT+QNWPREFCFG="nsa_nr5g_pref",0
+
+==== APN & Data ====
+Show APN Profiles ;AT+CGDCONT?
+Set Auto APN ;AT+CGDCONT=1,"IP",""
+Show PDP Context State ;AT+CGACT?
+Activate Data Context ;AT+CGACT=1,1
+Deactivate Data Context ;AT+CGACT=0,1
+
+==== SIM & Network Registration ====
+Check Registration Status ;AT+CREG?
+Check EPS/4G Registration ;AT+CEREG?
+Check 5G Registration ;AT+QREGSWT?
+Force Manual Operator Select ;AT+COPS=1,2,"<MCCMNC>"
+Back to Automatic Operator ;AT+COPS=0
+
+==== SMS ====
+Set SMS to Text Mode ;AT+CMGF=1
+Set SMS to PDU Mode ;AT+CMGF=0
+Check SMS Mode ;AT+CSMS?
+List All SMS ;AT+CMGL="ALL"
+
+==== Diagnostic & Debug ====
+Show Log Configuration ;AT+QLOGCFG?
+Show Task/Thread Status ;AT+QTASK
+Show Runtime Errors ;AT+QERR
+
+==== Repair & Troubleshoot ====
+Reset Radio Stack ;AT+CFUN=1,1
+Reset Network Registration ;AT+CRESET
+Clear All Network Settings ;AT+QPRTPARA=3
+Check SIM Voltage ;AT+QSIMVOL
+
+==== IMEI / Calibration ====
+Change IMEI ;AT+EGMR=1,7,"IMEI_NUMBER"
+Read Original IMEI ;AT+EGMR=0,7
+

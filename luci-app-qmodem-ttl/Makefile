@@ -10,7 +10,6 @@ PKG_VERSION:=2.7.0
 PKG_LICENSE:=GPLv3
 PKG_LINCESE_FILES:=LICENSE
 PKG_MAINTAINER:=Tom <fjrcn@outlook.com>
-LUCI_DEPENDS:=+luci-app-qmodem
 		
 
 define Package/luci-app-qmodem-ttl/conffiles

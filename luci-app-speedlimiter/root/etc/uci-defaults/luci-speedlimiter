@@ -1,0 +1,13 @@
+#!/bin/sh
+chmod +x  /etc/init.d/speedlimiter /usr/bin/speedlimiter*
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@speedlimiter[-1]
+	add ucitrack speedlimiter
+	set ucitrack.@speedlimiter[-1].init=speedlimiter
+	commit ucitrack
+EOF
+
+[ -s /etc/config/speedlimiter ] || echo "config speedlimiter" > /etc/config/speedlimiter
+
+rm -f /tmp/luci-indexcache
+exit 0

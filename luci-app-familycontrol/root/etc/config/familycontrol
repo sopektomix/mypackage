@@ -1,0 +1,31 @@
+config familycontrol
+	option enabled '0'
+	option control_mode 'blacklist'
+	option list_type 'blacklist'
+	option chain 'forward'
+
+config device
+	option comment 'Default example'
+	option timestart '00:00'
+	option timeend '23:55'
+	option week '0'
+	option mac ''
+	option enable '0'
+
+config device
+	option comment 'Example subnet control'
+	option mac '192.168.10.10/24'
+	option timestart '00:00'
+	option timeend '00:00'
+	option week '0'
+	option enable '0'
+
+config urlcontrol
+	option comment 'Block sample sites globally'
+	option enable '0'
+	option device ''          # for reference only, shown in UI (auto-list)
+	option domains 'facebook.com,youtube.com'
+	option week '0'
+	option timestart '00:00'
+	option timeend '23:55'
+

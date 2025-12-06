@@ -1,0 +1,16 @@
+<% include("cbi/map") %>
+
+<script type="text/javascript">
+//<![CDATA[
+	XHR.poll(2, '<%=luci.dispatcher.build_url("admin", "control", "familycontrol", "status")%>', null,
+		function (x, result) {
+			var status = document.getElementsByClassName('familycontrol_status')[0];
+			if (!status) return;
+			status.setAttribute("style", "font-weight:bold;");
+			status.setAttribute("color", result.status ? "green" : "red");
+			status.innerHTML = result.status ? '<%=translate("RUNNING")%>' : '<%=translate("NOT RUNNING")%>';
+		}
+	);
+//]]>
+</script>
+

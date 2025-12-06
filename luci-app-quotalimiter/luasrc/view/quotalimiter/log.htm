@@ -1,0 +1,30 @@
+<%+header%>
+
+<%
+local http = require "luci.http"
+local fs   = require "nixio.fs"
+local uci  = require "luci.model.uci".cursor()
+
+local log_path = uci:get("quotalimiter", "settings", "log_file") or "/var/log/quotalimiter.log"
+
+if http.formvalue("clear") then
+	fs.writefile(log_path, "")
+end
+
+local data = fs.readfile(log_path) or ""
+%>
+
+<h2><%:QuotaLimiter log%></h2>
+
+<div class="cbi-section">
+  <form method="post" action="<%=luci.dispatcher.build_url('admin/control/quotalimiter/log')%>">
+    <div style="margin-bottom:8px;">
+      <input type="submit" class="btn cbi-button cbi-button-reset" name="clear" value="<%:Clear log%>" />
+    </div>
+  </form>
+
+  <textarea style="width:100%;height:380px;font-family:monospace;" readonly="readonly"><%=data%></textarea>
+</div>
+
+<%+footer%>
+

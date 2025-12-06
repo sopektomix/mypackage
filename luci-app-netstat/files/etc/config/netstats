@@ -1,5 +1,6 @@
 
 config config
 	option prefer 'wwan0_1'
-	option backend 'normal'
+	option backend 'vnstat'
+	option mode 'monthly'
 

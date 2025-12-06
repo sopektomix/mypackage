@@ -1,0 +1,1436 @@
+msgid "Pass Wall"
+msgstr "Pass Wall"
+
+msgid "Auto"
+msgstr "Auto"
+
+msgid "RUNNING"
+msgstr "RUNNING"
+
+msgid "NOT RUNNING"
+msgstr "NOT RUNNING"
+
+msgid "Working..."
+msgstr "Connection Normal"
+
+msgid "Problem detected!"
+msgstr "Connection Failed"
+
+msgid "Touch Check"
+msgstr "Tap to Check"
+
+msgid "Kernel Unsupported"
+msgstr "Kernel Not Supported"
+
+msgid "Main Settings"
+msgstr "Node Selection"
+
+msgid "Basic Settings"
+msgstr "Basic Settings"
+
+msgid "Node List"
+msgstr "Node List"
+
+msgid "Other Settings"
+msgstr "Advanced Settings"
+
+msgid "Load Balancing"
+msgstr "Load Balancing"
+
+msgid "Enter interface"
+msgstr "Enter Interface"
+
+msgid "Rule Manage"
+msgstr "Rule Management"
+
+msgid "Rule List"
+msgstr "Rule List"
+
+msgid "Access control"
+msgstr "Access Control"
+
+msgid "Watch Logs"
+msgstr "View Logs"
+
+msgid "Node Config"
+msgstr "Node Configuration"
+
+msgid "Running Status"
+msgstr "Running Status"
+
+msgid "Baidu Connection"
+msgstr "Baidu Connection"
+
+msgid "Google Connection"
+msgstr "Google Connection"
+
+msgid "GitHub Connection"
+msgstr "GitHub Connection"
+
+msgid "Instagram Connection"
+msgstr "Instagram Connection"
+
+msgid "Node Check"
+msgstr "Node Check"
+
+msgid "Check..."
+msgstr "Checking..."
+
+msgid "Clear"
+msgstr "Clear"
+
+msgid "Main switch"
+msgstr "Main Switch"
+
+msgid "TCP Node"
+msgstr "TCP Node"
+
+msgid "UDP Node"
+msgstr "UDP Node"
+
+msgid "Edit Current Node"
+msgstr "Edit Current Node"
+
+msgid "Socks Config"
+msgstr "Socks Config"
+
+msgid "Socks Node"
+msgstr "Socks Node"
+
+msgid "Listen Port"
+msgstr "Listen Port"
+
+msgid "0 is not use"
+msgstr "0 means not used"
+
+msgid "Same as the tcp node"
+msgstr "Same as the TCP node"
+
+msgid "Current node: %s"
+msgstr "Current node: %s"
+
+msgid "Filter Mode"
+msgstr "Filter Mode"
+
+msgid "No Filter"
+msgstr "No Filter"
+
+msgid "TCP node must be '%s' type to use FakeDNS."
+msgstr "TCP node must be of type '%s' to use FakeDNS."
+
+msgid "Direct DNS"
+msgstr "Direct DNS"
+
+msgid "Remote DNS"
+msgstr "Remote DNS"
+
+msgid "Resolver For The List Proxied"
+msgstr "Resolver For Proxied Domain List"
+
+msgid "Requery DNS By %s"
+msgstr "Requery DNS Via %s"
+
+msgid "Socks Server"
+msgstr "Socks Server"
+
+msgid "Misconfigured"
+msgstr "Misconfigured"
+
+msgid "Make sure socks service is available on this address."
+msgstr "Please ensure the Socks service is available at this address."
+
+msgid "Format must be:"
+msgstr "Format must be:"
+
+msgid "Remote DNS DoH"
+msgstr "Remote DNS DoH"
+
+msgid "Cache Resolved"
+msgstr "Cache Resolved Results"
+
+msgid "Notify the DNS server when the DNS query is notified, the location of the client (cannot be a private IP address)."
+msgstr "When a DNS query is made, notify the DNS server of the client's geographic location (cannot be a private IP address)."
+
+msgid "This feature requires the DNS server to support the Edns Client Subnet (RFC7871)."
+msgstr "This feature requires the DNS server to support EDNS Client Subnet (RFC7871)."
+
+msgid "The effect is better, but will increase the memory."
+msgstr "Better effect, but increases memory usage."
+
+msgid "When using the chnroute list the default DNS"
+msgstr "Default DNS when using non-China list"
+
+msgid "Remote DNS can avoid more DNS leaks, but some domestic domain names maybe to proxy!"
+msgstr "Remote DNS can avoid more DNS leaks, but may cause some domestic domain names outside the rule list to go through the proxy!"
+
+msgid "Direct DNS Internet experience may be better, but DNS will be leaked!"
+msgstr "Direct DNS may provide a better internet experience, but will leak DNS!"
+
+msgid "Filter Proxy Host IPv6"
+msgstr "Filter Proxy Domain IPv6"
+
+msgid "Experimental feature."
+msgstr "Experimental feature."
+
+msgid "Clear IPSET"
+msgstr "Clear IPSET"
+
+msgid "Try this feature if the rule modification does not take effect."
+msgstr "Try this feature if rule modifications don't take effect."
+
+msgid "About DNS issues:"
+msgstr "About DNS issues:"
+
+msgid "Some browsers may have built-in DNS, be sure to close. Example: Chrome. Settings - Security and Privacy - Security - Use secure DNS disabled."
+msgstr "Some browsers may have built-in DNS; be sure to disable it. Example: Chrome. Settings -> Security and privacy -> Security -> Use secure DNS -> Disabled."
+
+msgid "Sometimes after restart, you can not internet, especially the GFW mode. At this time, close all browsers (important), Windows Client, please ipconfig /flushdns. Please close the WiFi on the phone, cut the flight mode and then cut back."
+msgstr "Sometimes after restart, you cannot access the internet, especially in GFW mode. At this time, close all browsers (important). For Windows clients, run ipconfig /flushdns. For mobile devices, turn off WiFi, toggle airplane mode on and off."
+
+msgid "The client DNS and the default gateway must point to this router."
+msgstr "Client DNS and default gateway must point to this router."
+
+msgid "If you have a wrong DNS process, the consequences are at your own risk!"
+msgstr "If you configure the DNS process incorrectly, the consequences are your own responsibility!"
+
+msgid "You can use load balancing for failover."
+msgstr "You can use load balancing for failover."
+
+msgid "Restore the default configuration method. Input example in the address bar:"
+msgstr "To restore default configuration, enter in the address bar:"
+
+msgid "Hide menu method, input example in the address bar:"
+msgstr "To hide the menu, enter in the address bar:"
+
+msgid "After the hidden to the display, input example in the address bar:"
+msgstr "To display after hiding, enter in the address bar:"
+
+msgid "Are you sure to reset?"
+msgstr "Are you sure you want to reset?"
+
+msgid "Are you sure to hide?"
+msgstr "Are you sure you want to hide?"
+
+msgid "DNS Export Of Multi WAN"
+msgstr "Domestic DNS Specify Exit"
+
+msgid "Node Export Of Multi WAN"
+msgstr "Node Specify Exit"
+
+msgid "Only support Multi Wan."
+msgstr "Only effective with multi-WAN."
+
+msgid "Not Specify"
+msgstr "Not Specified"
+
+msgid "custom"
+msgstr "custom"
+
+msgid "Process"
+msgstr "Process"
+
+msgid "1 Process"
+msgstr "Single Process"
+
+msgid "Proxy Mode"
+msgstr "Proxy Mode"
+
+msgid "Default Proxy Mode"
+msgstr "Default Proxy Mode"
+
+msgid "No Proxy"
+msgstr "No Proxy"
+
+msgid "Global Proxy"
+msgstr "Global Proxy"
+
+msgid "GFW List"
+msgstr "GFW List"
+
+msgid "Not China List"
+msgstr "Outside China List"
+
+msgid "Game Mode"
+msgstr "Game Mode"
+
+msgid "China List"
+msgstr "China List"
+
+msgid "Only use direct/proxy list"
+msgstr "Only use Direct/Proxy List"
+
+msgid "Localhost"
+msgstr "Localhost"
+
+msgid "Router Localhost"
+msgstr "Router Localhost"
+
+msgid "Same as the %s default proxy mode"
+msgstr "Same as %s default proxy mode"
+
+msgid "Want different devices to use different proxy modes/ports/nodes? Please use access control."
+msgstr "Want different devices to use different proxy modes/ports/nodes? Please use Access Control."
+
+msgid "China list or gfwlist cannot be used together with outside China list!"
+msgstr "China list cannot be used together with Outside China list or GFW list!"
+
+msgid "Operation"
+msgstr "Operation"
+
+msgid "Add Node"
+msgstr "Add Node"
+
+msgid "Add the node via the link"
+msgstr "Add Node via Link"
+
+msgid "SS/SSR/Vmess/VLESS/Trojan/Hysteria Link"
+msgstr "SS/SSR/Vmess/VLESS/Trojan/Hysteria Link"
+
+msgid "Please enter the correct link."
+msgstr "Please enter a correct link."
+
+msgid "Clear all nodes"
+msgstr "Clear All Nodes"
+
+msgid "Are you sure to clear all nodes?"
+msgstr "Are you sure you want to clear all nodes?"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Delete select nodes"
+msgstr "Delete Selected Nodes"
+
+msgid "To Top"
+msgstr "Move to Top"
+
+msgid "Select"
+msgstr "Select"
+
+msgid "DeSelect"
+msgstr "Deselect"
+
+msgid "Select all"
+msgstr "Select All"
+
+msgid "DeSelect all"
+msgstr "Deselect All"
+
+msgid "Are you sure to delete select nodes?"
+msgstr "Are you sure you want to delete the selected nodes?"
+
+msgid "You no select nodes !"
+msgstr "You have not selected any nodes!"
+
+msgid "Are you sure set to"
+msgstr "Are you sure to set"
+
+msgid "the server?"
+msgstr "as the server?"
+
+msgid "You choose node is:"
+msgstr "Your chosen node is:"
+
+msgid "Timeout"
+msgstr "Timeout"
+
+msgid "Node Remarks"
+msgstr "Node Remarks"
+
+msgid "Add Mode"
+msgstr "Add Mode"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Balancing"
+msgstr "Load Balancing"
+
+msgid "Xray_balancing"
+msgstr "Xray Load Balancing"
+
+msgid "V2ray_balancing"
+msgstr "V2ray Load Balancing"
+
+msgid "Balancing Strategy"
+msgstr "Load Balancing Strategy"
+
+msgid "Use Custome Probe URL"
+msgstr "Use Custom Probe URL"
+
+msgid "By default the built-in probe URL will be used, enable this option to use a custom probe URL."
+msgstr "By default, the built-in probe URL will be used. Enable this option to use a custom probe URL."
+
+msgid "Probe URL"
+msgstr "Probe URL"
+
+msgid "The URL used to detect the connection status."
+msgstr "The URL used to detect connection status."
+
+msgid "Probe Interval"
+msgstr "Probe Interval"
+
+msgid "The interval between initiating probes. Every time this time elapses, a server status check is performed on a server. The time format is numbers + units, such as '10s', '2h45m', and the supported time units are <code>ns</code>, <code>us</code>, <code>ms</code>, <code>s</code>, <code>m</code>, <code>h</code>, which correspond to nanoseconds, microseconds, milliseconds, seconds, minutes, and hours, respectively."
+msgstr "The interval between initiating probes. Every time this elapses, a server status check is performed on a server. Time format is numbers + units, e.g., '10s', '2h45m'. Supported units: <code>ns</code>, <code>us</code>, <code>ms</code>, <code>s</code>, <code>m</code>, <code>h</code>, corresponding to nanoseconds, microseconds, milliseconds, seconds, minutes, hours."
+
+msgid "Shunt"
+msgstr "Routing"
+
+msgid "Xray_shunt"
+msgstr "Xray Routing"
+
+msgid "V2ray_shunt"
+msgstr "V2ray Routing"
+
+msgid "Preproxy"
+msgstr "Pre-proxy"
+
+msgid "Preproxy Node"
+msgstr "Pre-proxy Node"
+
+msgid "Set the node to be used as a pre-proxy. Each rule (including <code>Default</code>) has a separate switch that controls whether this rule uses the pre-proxy or not."
+msgstr "Set the node to be used as a pre-proxy. Each rule (including <code>Default</code>) has a separate switch controlling whether it uses the pre-proxy."
+
+msgid "Direct Connection"
+msgstr "Direct Connection"
+
+msgid "Blackhole"
+msgstr "Blackhole"
+
+msgid "Default Preproxy"
+msgstr "Default Pre-proxy"
+
+msgid "There are no available nodes, please add or subscribe nodes first."
+msgstr "No available nodes. Please add or subscribe to nodes first."
+
+msgid "No shunt rules? Click me to go to add."
+msgstr "No routing rules? Click me to add."
+
+msgid "When using, localhost will connect this node first and then use this node to connect the default node."
+msgstr "When used, localhost will first connect to this node, then use this node to connect to the default (landing) node."
+
+msgid "Domain Strategy"
+msgstr "Domain Strategy"
+
+msgid "Domain matcher"
+msgstr "Domain Matcher"
+
+msgid "'AsIs': Only use domain for routing. Default value."
+msgstr "'AsIs': Use only domain for routing. Default."
+
+msgid "'IPIfNonMatch': When no rule matches current domain, resolves it into IP addresses (A or AAAA records) and try all rules again."
+msgstr "'IPIfNonMatch': When no rule matches the current domain, resolve it to IP (A or AAAA records) and try all rules again."
+
+msgid "'IPOnDemand': As long as there is a IP-based rule, resolves the domain into IP immediately."
+msgstr "'IPOnDemand': If any IP-based rule is encountered, resolve the domain to IP immediately for matching."
+
+msgid "Load balancing node list"
+msgstr "Load Balancing Node List"
+
+msgid "Load balancing node list, <a target='_blank' href='https://toutyrater.github.io/routing/balance2.html'>document</a>"
+msgstr "Load balancing node list, <a target='_blank' href='https://toutyrater.github.io/routing/balance2.html'>documentation</a>"
+
+msgid "From Share URL"
+msgstr "Import Share URL"
+
+msgid "Build Share URL"
+msgstr "Export Share URL"
+
+msgid "Import Finished"
+msgstr "Import Finished:"
+
+msgid "Not a supported scheme:"
+msgstr "Unsupported scheme:"
+
+msgid "Invalid Share URL Format"
+msgstr "Invalid Share URL Format"
+
+msgid "Paste Share URL Here"
+msgstr "Paste Share URL Here"
+
+msgid "Share URL to clipboard unable."
+msgstr "Unable to copy share URL to clipboard."
+
+msgid "Share URL to clipboard successfully."
+msgstr "Successfully copied share URL to clipboard."
+
+msgid "Faltal on get option, please help in debug:"
+msgstr "Fatal error getting option, please help debug:"
+
+msgid "Faltal on set option, please help in debug:"
+msgstr "Fatal error setting option, please help debug:"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "Address (Support Domain Name)"
+msgstr "Address (Supports Domain Name)"
+
+msgid "Trojan Verify Cert"
+msgstr "Verify Certificate"
+
+msgid "Trojan Cert Path"
+msgstr "Certificate Path"
+
+msgid "Finger Print"
+msgstr "Fingerprint Spoofing"
+
+msgid "Avoid using randomized, unless you have to."
+msgstr "Avoid using 'randomized', unless you must."
+
+msgid "Original"
+msgstr "Original"
+
+msgid "Transport Plugin"
+msgstr "Transport Plugin"
+
+msgid "Shadowsocks secondary encryption"
+msgstr "Shadowsocks Secondary Encryption"
+
+msgid "Obfs Password"
+msgstr "Obfuscation Password"
+
+msgid "Auth Type"
+msgstr "Authentication Type"
+
+msgid "Auth Password"
+msgstr "Authentication Password"
+
+msgid "Max upload Mbps"
+msgstr "Max Upload (Mbps)"
+
+msgid "Max download Mbps"
+msgstr "Max Download (Mbps)"
+
+msgid "QUIC stream receive window"
+msgstr "QUIC Stream Receive Window"
+
+msgid "QUIC connection receive window"
+msgstr "QUIC Connection Receive Window"
+
+msgid "Disable MTU detection"
+msgstr "Disable MTU Detection"
+
+msgid "Lazy Start"
+msgstr "Lazy Start"
+
+msgid "Encrypt Method"
+msgstr "Encryption"
+
+msgid "Latency"
+msgstr "Latency"
+
+msgid "Show Add Mode"
+msgstr "Show Add Mode"
+
+msgid "Show Group"
+msgstr "Show Group"
+
+msgid "Group"
+msgstr "Group"
+
+msgid "Auto Ping"
+msgstr "Auto Ping"
+
+msgid "Concise display nodes"
+msgstr "Concise Node Display"
+
+msgid "Show server address and port"
+msgstr "Show Server Address and Port"
+
+msgid "Availability test"
+msgstr "Availability Test"
+
+msgid "Node num"
+msgstr "Node Count"
+
+msgid "Self add"
+msgstr "Self-added"
+
+msgid "Apply"
+msgstr "Apply"
+
+msgid "Use"
+msgstr "Use"
+
+msgid "Copy"
+msgstr "Copy"
+
+msgid "Delay Settings"
+msgstr "Scheduled Settings"
+
+msgid "Open and close Daemon"
+msgstr "Start/Stop Daemon"
+
+msgid "Delay Start"
+msgstr "Delayed Start on Boot"
+
+msgid "Units:seconds"
+msgstr "Units: seconds"
+
+msgid "Units:minutes"
+msgstr "Units: minutes"
+
+msgid "Open and close automatically"
+msgstr "Automatic On/Off Schedule"
+
+msgid "Automatically turn off time"
+msgstr "Auto Turn Off Time"
+
+msgid "Automatically turn on time"
+msgstr "Auto Turn On Time"
+
+msgid "Automatically restart time"
+msgstr "Auto Restart Time"
+
+msgid "Forwarding Settings"
+msgstr "Forwarding Settings"
+
+msgid "TCP No Redir Ports"
+msgstr "TCP No Forward Ports"
+
+msgid "UDP No Redir Ports"
+msgstr "UDP No Forward Ports"
+
+msgid "Fill in the ports you don't want to be forwarded by the agent, with the highest priority."
+msgstr "Fill in ports you don't want forwarded by the proxy. Highest priority."
+
+msgid "TCP Proxy Drop Ports"
+msgstr "TCP Forward Block Ports"
+
+msgid "UDP Proxy Drop Ports"
+msgstr "UDP Forward Block Ports"
+
+msgid "TCP Redir Ports"
+msgstr "TCP Forward Ports"
+
+msgid "UDP Redir Ports"
+msgstr "UDP Forward Ports"
+
+msgid "No patterns are used"
+msgstr "Not Used"
+
+msgid "All"
+msgstr "All"
+
+msgid "Common Use"
+msgstr "Commonly Used"
+
+msgid "Only Web"
+msgstr "Web Only"
+
+msgid "Default"
+msgstr "Default"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "Hijacking ICMP (PING)"
+msgstr "Hijack ICMP (PING)"
+
+msgid "Hijacking ICMPv6 (IPv6 PING)"
+msgstr "Hijack ICMPv6 (IPv6 PING)"
+
+msgid "Sniffing (V2Ray/Xray)"
+msgstr "Traffic Sniffing (V2ray/Xray)"
+
+msgid "When using the V2ray/Xray shunt, must be enabled, otherwise the shunt will invalid."
+msgstr "Must be enabled when using V2Ray/Xray routing, otherwise routing will be invalid."
+
+msgid "Sniffing Route Only (Xray)"
+msgstr "Sniffing for Routing Only (Xray)"
+
+msgid "When enabled, the server not will resolve the domain name again."
+msgstr "When enabled, the server will not re-resolve the domain name."
+
+msgid "TCP Proxy Way"
+msgstr "TCP Proxy Method"
+
+msgid "Proxy Settings"
+msgstr "Proxy Settings"
+
+msgid "Auto Switch"
+msgstr "Auto Switch"
+
+msgid "How often to test"
+msgstr "How often to test"
+
+msgid "Timeout seconds"
+msgstr "Timeout (seconds)"
+
+msgid "Timeout retry num"
+msgstr "Timeout Retry Count"
+
+msgid "Main node"
+msgstr "Main Node"
+
+msgid "List of backup nodes"
+msgstr "Backup Node List"
+
+msgid "Restore Switch"
+msgstr "Restore Switch"
+
+msgid "When detects main node is available, switch back to the main node."
+msgstr "When the main node is detected as available, switch back to it."
+
+msgid "If the main node is V2ray/Xray shunt"
+msgstr "If the main node is V2ray/Xray routing"
+
+msgid "Switch it"
+msgstr "Switch it"
+
+msgid "Applying to the default node"
+msgstr "Applying to Default Node"
+
+msgid "Applying to the preproxy node"
+msgstr "Applying to Pre-proxy Node"
+
+msgid "Add nodes to the standby node list by keywords"
+msgstr "Add nodes to backup list by keywords"
+
+msgid "Delete nodes in the standby node list by keywords"
+msgstr "Delete nodes from backup list by keywords"
+
+msgid "Please enter the node keyword, pay attention to distinguish between spaces, uppercase and lowercase."
+msgstr "Enter node keywords. Note: spaces, uppercase, and lowercase are distinguished."
+
+msgid "Configure this node with 127.0.0.1: this port"
+msgstr "Configure this node with 127.0.0.1 and this port"
+
+msgid "Enable Load Balancing"
+msgstr "Enable Load Balancing"
+
+msgid "Console Username"
+msgstr "Console Username"
+
+msgid "Console Password"
+msgstr "Console Password"
+
+msgid "Console Port"
+msgstr "Console Port"
+
+msgid "In the browser input routing IP plus port access, such as:192.168.1.1:1188"
+msgstr "In browser, input router IP plus port, e.g., 192.168.1.1:1188"
+
+msgid "Haproxy Port"
+msgstr "Load Balancing Port"
+
+msgid "Health Check Type"
+msgstr "Health Check Type"
+
+msgid "Inner implement"
+msgstr "Built-in Implementation"
+
+msgid "Health Check Inter"
+msgstr "Health Check Interval"
+
+msgid "When the availability test is used, the load balancing node will be converted into a Socks node. when node list set customizing, must be a Socks node, otherwise the health check will be invalid."
+msgstr "When using availability test, the load balancing node will convert to a Socks node. If customizing the node list below, it must be a Socks node, otherwise health check will be invalid."
+
+msgid "Add a node, Export Of Multi WAN Only support Multi Wan. Load specific gravity range 1-256. Multiple primary servers can be load balanced, standby will only be enabled when the primary server is offline! Multiple groups can be set, Haproxy port same one for each group."
+msgstr "Add a node. Specify Exit is for multi-WAN users. Load weight range 1-256. Multiple primary servers can be load balanced; standby is enabled only when primary is offline! Multiple groups can be set; same Haproxy port = same group."
+
+msgid "Note that the node configuration parameters for load balancing must be consistent when use TCP health check type, otherwise it cannot be used normally!"
+msgstr "Note: When using TCP health check, load balancing node configuration parameters must be consistent, otherwise it cannot function normally!"
+
+msgid "Node"
+msgstr "Node"
+
+msgid "Node Address"
+msgstr "Node Address"
+
+msgid "Node Port"
+msgstr "Node Port"
+
+msgid "Node Weight"
+msgstr "Load Weight"
+
+msgid "Export Of Multi WAN"
+msgstr "Multi-WAN Specify Exit"
+
+msgid "Main"
+msgstr "Main"
+
+msgid "Mode"
+msgstr "Mode"
+
+msgid "Primary"
+msgstr "Primary"
+
+msgid "Standby"
+msgstr "Standby"
+
+msgid "Check update"
+msgstr "Check for Updates"
+
+msgid "Manually update"
+msgstr "Manual Update"
+
+msgid "The latest version: %s, currently does not support automatic update, if you need to update, please compile or download the ipk and then manually install."
+msgstr "Latest version: %s. Currently does not support auto-update. If you need to update, please compile or download the ipk and install manually."
+
+msgid "Enable custom URL"
+msgstr "Enable Custom URL"
+
+msgid "GFW domains(gfwlist) Update URL"
+msgstr "GFW Domains (gfwlist) Update URL"
+
+msgid "China IPs(chnroute) Update URL"
+msgstr "China IPs (chnroute) Update URL"
+
+msgid "China IPv6s(chnroute6) Update URL"
+msgstr "China IPv6s (chnroute6) Update URL"
+
+msgid "China List(Chnlist) Update URL"
+msgstr "China List (Chnlist) Update URL"
+
+msgid "Rule status"
+msgstr "Rule Version"
+
+msgid "Enable auto update rules"
+msgstr "Enable Auto-Update Rules"
+
+msgid "Week update rules"
+msgstr "Update Day of Week"
+
+msgid "Day update rules"
+msgstr "Update Hour of Day"
+
+msgid "Every day"
+msgstr "Every day"
+
+msgid "day"
+msgstr "day"
+
+msgid "Week"
+msgstr "Week"
+
+msgid "oclock"
+msgstr "o'clock"
+
+msgid "Location of V2ray/Xray asset"
+msgstr "V2ray/Xray Asset Directory"
+
+msgid "This variable specifies a directory where geoip.dat and geosite.dat files are."
+msgstr "This variable specifies the directory containing geoip.dat and geosite.dat files."
+
+msgid "Shunt Rule"
+msgstr "Routing Rule"
+
+msgid "Please note attention to the priority, the higher the order, the higher the priority."
+msgstr "Note the priority; higher in the list means higher priority."
+
+msgid "Update..."
+msgstr "Updating..."
+
+msgid "It is the latest version"
+msgstr "Already the latest version"
+
+msgid "Update successful"
+msgstr "Update successful"
+
+msgid "Click to update"
+msgstr "Click to update"
+
+msgid "Updating..."
+msgstr "Updating..."
+
+msgid "Unexpected error"
+msgstr "Unexpected error"
+
+msgid "Updating, are you sure to close?"
+msgstr "Updating, are you sure you want to close?"
+
+msgid "Downloading..."
+msgstr "Downloading..."
+
+msgid "Unpacking..."
+msgstr "Unpacking..."
+
+msgid "Moving..."
+msgstr "Moving..."
+
+msgid "App Update"
+msgstr "Component Update"
+
+msgid "Please confirm that your firmware supports FPU."
+msgstr "Please confirm your firmware supports FPU."
+
+msgid "if you want to run from memory, change the path, /tmp beginning then save the application and update it manually."
+msgstr "If you want to run from memory, change the path to start with /tmp, then save the application and update manually."
+
+msgid "Make sure there is enough space to install %s"
+msgstr "Ensure there is enough space to install %s"
+
+msgid "App Path"
+msgstr "Application Path"
+
+msgid "%s App Path"
+msgstr "%s Application Path"
+
+msgid "%s Client App Path"
+msgstr "%s Client Application Path"
+
+msgid "Trojan-Go Version API"
+msgstr "Trojan-Go Version API"
+
+msgid "alternate API URL for version checking"
+msgstr "Alternate API URL for version checking"
+
+msgid "Node Subscribe"
+msgstr "Node Subscription"
+
+msgid "Subscribe Remark"
+msgstr "Subscription Remark (Provider)"
+
+msgid "Subscribe URL"
+msgstr "Subscription URL"
+
+msgid "Please input the subscription url first, save and submit before manual subscription."
+msgstr "Please input the subscription URL first, save and apply, then perform manual subscription."
+
+msgid "Subscribe via proxy"
+msgstr "Subscribe via Proxy"
+
+msgid "Enable auto update subscribe"
+msgstr "Enable Auto-Update Subscription"
+
+msgid "Manual subscription"
+msgstr "Manual Subscription"
+
+msgid "Delete All Subscribe Node"
+msgstr "Delete All Subscription Nodes"
+
+msgid "Delete the subscribed node"
+msgstr "Delete Subscribed Node"
+
+msgid "Manual subscription All"
+msgstr "Manual Subscription All"
+
+msgid "This remark already exists, please change a new remark."
+msgstr "This remark already exists, please use a new remark."
+
+msgid "Filter keyword Mode"
+msgstr "Filter Keyword Mode"
+
+msgid "Discard List"
+msgstr "Discard List"
+
+msgid "Keep List"
+msgstr "Keep List"
+
+msgid "Discard List,But Keep List First"
+msgstr "Discard List, But Keep List First"
+
+msgid "Keep List,But Discard List First"
+msgstr "Keep List, But Discard List First"
+
+msgid "Use global config"
+msgstr "Use Global Config"
+
+msgid "User-Agent"
+msgstr "User-Agent"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "ACLs"
+msgstr "Access Control Lists"
+
+msgid "ACLs is a tools which used to designate specific IP proxy mode."
+msgstr "Access Control Lists are tools to designate specific IP proxy modes."
+
+msgid "Example:"
+msgstr "Example:"
+
+msgid "IP range"
+msgstr "IP Range"
+
+msgid "Remarks"
+msgstr "Remarks"
+
+msgid "Direct List"
+msgstr "Direct List"
+
+msgid "Proxy List"
+msgstr "Proxy List"
+
+msgid "Block List"
+msgstr "Block List"
+
+msgid "Lan IP List"
+msgstr "LAN IP List"
+
+msgid "Route Hosts"
+msgstr "Router Hosts File"
+
+msgid "Join the direct hosts list of domain names will not proxy."
+msgstr "Domains added here will not go through proxy, effective for all modes. Highest priority."
+
+msgid "These had been joined ip addresses will not proxy. Please input the ip address or ip address segment,every line can input only one ip address. For example: 192.168.0.0/24 or 223.5.5.5."
+msgstr "IPs added here will not go through proxy, effective for all modes. Highest priority. Enter IP address or CIDR, e.g., 192.168.0.0/24 or 223.5.5.5, one per line."
+
+msgid "These had been joined websites will use proxy. Please input the domain names of websites, every line can input only one website domain. For example: google.com."
+msgstr "Websites added here will use proxy. Enter website domain names, e.g., google.com, one per line."
+
+msgid "These had been joined ip addresses will use proxy. Please input the ip address or ip address segment, every line can input only one ip address. For example: 35.24.0.0/24 or 8.8.4.4."
+msgstr "IPs added here will use proxy. Enter IP address or CIDR, e.g., 35.24.0.0/24 or 8.8.4.4, one per line."
+
+msgid "These had been joined websites will be block. Please input the domain names of websites, every line can input only one website domain. For example: twitter.com."
+msgstr "Websites added here will be blocked. Enter website domain names, e.g., twitter.com, one per line."
+
+msgid "The list is the IPv4 LAN IP list, which represents the direct connection IP of the LAN. If you need the LAN IP in the proxy list, please clear it from the list. Do not modify this list by default."
+msgstr "This list is the IPv4 LAN IP list, representing LAN IPs for direct connection. If you need a LAN IP in the proxy list, remove it from here and add it to the proxy list. Do not modify by default."
+
+msgid "The list is the IPv6 LAN IP list, which represents the direct connection IP of the LAN. If you need the LAN IP in the proxy list, please clear it from the list. Do not modify this list by default."
+msgstr "This list is the IPv6 LAN IP list, representing LAN IPs for direct connection. If you need a LAN IP in the proxy list, remove it from here and add it to the proxy list. Do not modify by default."
+
+msgid "Configure routing etc/hosts file, if you don't know what you are doing, please don't change the content."
+msgstr "Configure router's etc/hosts file. If you don't know what you're doing, please don't change the content."
+
+msgid "These had been joined ip addresses will be block. Please input the ip address or ip address segment, every line can input only one ip address."
+msgstr "IPs added here will be blocked. Enter IP address or CIDR, one per line."
+
+msgid "Not valid domain name, please re-enter!"
+msgstr "Invalid domain name, please re-enter!"
+
+msgid "Not valid IP format, please re-enter!"
+msgstr "Invalid IP format, please re-enter!"
+
+msgid "Not valid IPv4 format, please re-enter!"
+msgstr "Invalid IPv4 format, please re-enter!"
+
+msgid "Not valid IPv6 format, please re-enter!"
+msgstr "Invalid IPv6 format, please re-enter!"
+
+msgid "Not true format, please re-enter!"
+msgstr "Incorrect format, please re-enter!"
+
+msgid "Plaintext: If this string matches any part of the targeting domain, this rule takes effet. Example: rule 'sina.com' matches targeting domain 'sina.com', 'sina.com.cn' and 'www.sina.com', but not 'sina.cn'."
+msgstr "Plaintext: If this string matches any part of the target domain, this rule takes effect. Example: rule 'sina.com' matches 'sina.com', 'sina.com.cn', and 'www.sina.com', but not 'sina.cn'."
+
+msgid "Regular expression: Begining with 'regexp:', the rest is a regular expression. When the regexp matches targeting domain, this rule takes effect. Example: rule 'regexp:\.goo.\.com$' matches 'www.google.com' and 'fonts.googleapis.com', but not 'google.com'."
+msgstr "Regular expression: Starts with 'regexp:', the rest is a regex. When regex matches target domain, rule takes effect. Example: 'regexp:\.goo.\.com$' matches 'www.google.com', 'fonts.googleapis.com', but not 'google.com'."
+
+msgid "Subdomain (recommended): Begining with 'domain:' and the rest is a domain. When the targeting domain is exactly the value, or is a subdomain of the value, this rule takes effect. Example: rule 'domain:v2ray.com' matches 'www.v2ray.com', 'v2ray.com', but not 'xv2ray.com'."
+msgstr "Subdomain (recommended): Starts with 'domain:' followed by a domain. Rule takes effect if target domain is exactly this or its subdomain. Example: 'domain:v2ray.com' matches 'www.v2ray.com', 'v2ray.com', but not 'xv2ray.com'."
+
+msgid "Full domain: Begining with 'full:' and the rest is a domain. When the targeting domain is exactly the value, the rule takes effect. Example: rule 'domain:v2ray.com' matches 'v2ray.com', but not 'www.v2ray.com'."
+msgstr "Full domain: Starts with 'full:' followed by a domain. Rule takes effect only if target domain exactly matches. Example: 'full:v2ray.com' matches 'v2ray.com' but not 'www.v2ray.com'."
+
+msgid "Pre-defined domain list: Begining with 'geosite:' and the rest is a name, such as geosite:google or geosite:cn."
+msgstr "Pre-defined domain list: Starts with 'geosite:' followed by a name, e.g., geosite:google or geosite:cn."
+
+msgid "Domains from file: Such as 'ext:file:tag'. The value must begin with ext: (lowercase), and followed by filename and tag. The file is placed in resource directory, and has the same format of geosite.dat. The tag must exist in the file."
+msgstr "Domains from file: E.g., 'ext:file:tag'. Must start with 'ext:' (lowercase), then filename and tag. File is in resource directory, format same as geosite.dat. Tag must exist in file."
+
+msgid "IP: such as '127.0.0.1'."
+msgstr "IP: e.g., '127.0.0.1'."
+
+msgid "CIDR: such as '127.0.0.0/8'."
+msgstr "CIDR: e.g., '10.0.0.0/8'."
+
+msgid "GeoIP: such as 'geoip:cn'. It begins with geoip: (lower case) and followed by two letter of country code."
+msgstr "GeoIP: e.g., 'geoip:cn'. Starts with 'geoip:' (lowercase) followed by two-letter country code. Supports most countries."
+
+msgid "IPs from file: Such as 'ext:file:tag'. The value must begin with ext: (lowercase), and followed by filename and tag. The file is placed in resource directory, and has the same format of geoip.dat. The tag must exist in the file."
+msgstr "IPs from file: E.g., 'ext:file:tag'. Must start with 'ext:' (lowercase), then filename and tag. File is in resource directory, format same as geoip.dat. Tag must exist in file."
+
+msgid "Clear logs"
+msgstr "Clear Logs"
+
+msgid "Only recommend to use with VLESS-TCP-XTLS-Vision."
+msgstr "Only recommended for use with VLESS-TCP-XTLS-Vision."
+
+msgid "Password"
+msgstr "Password"
+
+msgid "IV Check"
+msgstr "IV Check"
+
+msgid "UDP over TCP"
+msgstr "UDP over TCP"
+
+msgid "Need Xray-core or sing-box as server side."
+msgstr "Requires Xray-core or sing-box as server side."
+
+msgid "Connection Timeout"
+msgstr "Connection Timeout"
+
+msgid "Local Port"
+msgstr "Local Port"
+
+msgid "Fast Open"
+msgstr "Fast Open"
+
+msgid "Need node support required"
+msgstr "Requires node support"
+
+msgid "plugin"
+msgstr "plugin"
+
+msgid "opts"
+msgstr "plugin options"
+
+msgid "Protocol"
+msgstr "Protocol"
+
+msgid "Protocol_param"
+msgstr "Protocol Parameters"
+
+msgid "Obfs"
+msgstr "Obfuscation"
+
+msgid "Obfs_param"
+msgstr "Obfuscation Parameters"
+
+msgid "Plugin Name"
+msgstr "Plugin Name"
+
+msgid "Plugin Arguments"
+msgstr "Plugin Arguments"
+
+msgid "Brook Protocol"
+msgstr "Brook Protocol"
+
+msgid "Use TLS"
+msgstr "Use TLS"
+
+msgid "Naiveproxy Protocol"
+msgstr "Naiveproxy Protocol"
+
+msgid "V2ray Protocol"
+msgstr "V2ray Protocol"
+
+msgid "User Level"
+msgstr "User Level (level)"
+
+msgid "Transport"
+msgstr "Transport"
+
+msgid "Public Key"
+msgstr "Public Key"
+
+msgid "Private Key"
+msgstr "Private Key"
+
+msgid "Pre shared key"
+msgstr "Additional Symmetric Encryption Key"
+
+msgid "Local Address"
+msgstr "Local Address"
+
+msgid "Decimal numbers separated by "," or Base64-encoded strings."
+msgstr "Decimal numbers separated by "," or Base64-encoded strings."
+
+msgid "Camouflage Type"
+msgstr "Camouflage Type"
+
+msgid "Transport Layer Encryption"
+msgstr "Transport Layer Encryption"
+
+msgid "Whether or not transport layer encryption is enabled, "none" for unencrypted, "tls" for using TLS, "xtls" for using XTLS."
+msgstr "Whether transport layer encryption is enabled. Options: "none" for no encryption, "tls" for TLS, "xtls" for XTLS."
+
+msgid "Original Trojan only supported 'tls', please choose 'tls'."
+msgstr "Original Trojan only supports 'tls', please choose 'tls'."
+
+msgid "Transfer mode"
+msgstr "Transfer Mode"
+
+msgid "Domain"
+msgstr "Domain"
+
+msgid "allowInsecure"
+msgstr "Allow Insecure Connection"
+
+msgid "Whether unsafe connections are allowed. When checked, Certificate validation will be skipped."
+msgstr "Whether insecure connections are allowed. When checked, certificate validation will be skipped."
+
+msgid "SS AEAD Node Use Type"
+msgstr "SS AEAD Node Usage Type"
+
+msgid "Trojan Node Use Type"
+msgstr "Trojan Node Usage Type"
+
+msgid "
+none: default, no masquerade, data sent is packets with no characteristics.
+srtp: disguised as an SRTP packet, it will be recognized as video call data (such as FaceTime).
+utp: packets disguised as uTP will be recognized as bittorrent downloaded data.
+wechat-video: packets disguised as WeChat video calls.
+dtls: disguised as DTLS 1.2 packet.
+wireguard: disguised as a WireGuard packet. (not really WireGuard protocol)"
+msgstr "
+none: default, no disguise, data packets have no distinguishing characteristics.
+srtp: disguised as SRTP packets, recognized as video call data (e.g., FaceTime).
+utp: disguised as uTP packets, recognized as BitTorrent download data.
+wechat-video: disguised as WeChat video call packets.
+dtls: disguised as DTLS 1.2 packets.
+wireguard: disguised as WireGuard packets. (not actual WireGuard protocol)"
+
+msgid "A legal file path. This file must not exist before running."
+msgstr "A valid file path. This file must not exist before running."
+
+msgid "Auth"
+msgstr "Authentication"
+
+msgid "Socks for authentication"
+msgstr "Socks Authentication Method"
+
+msgid "Socks protocol authentication, support anonymous and password."
+msgstr "Socks protocol authentication, supports anonymous and username/password."
+
+msgid "anonymous"
+msgstr "anonymous"
+
+msgid "User Password"
+msgstr "Username/Password"
+
+msgid "Username and Password must be used together!"
+msgstr "Username and Password must be used together!"
+
+msgid "Node Number"
+msgstr "Node Count"
+
+msgid "You can only set up a maximum of %s nodes for the time being, Used for access control."
+msgstr "Currently, you can only set a maximum of %s nodes for use with Access Control."
+
+msgid "Firewall tools"
+msgstr "Firewall Tools"
+
+msgid "IPv6 TProxy"
+msgstr "IPv6 Transparent Proxy (TProxy)"
+
+msgid "Experimental feature. Make sure that your node supports IPv6."
+msgstr "Experimental feature. Ensure your node supports IPv6."
+
+msgid "Status info"
+msgstr "Status Info"
+
+msgid "Big icon"
+msgstr "Large Icon"
+
+msgid "Show node check"
+msgstr "Show Node Check"
+
+msgid "Show Show IP111"
+msgstr "Show IP111"
+
+msgid "The MTProto protocol must be 32 characters and can only contain characters from 0 to 9 and a to f."
+msgstr "MTProto protocol must be 32 characters, containing only 0-9 and a-f."
+
+msgid "Destination protocol"
+msgstr "Destination Protocol"
+
+msgid "Destination address"
+msgstr "Destination Address"
+
+msgid "Destination port"
+msgstr "Destination Port"
+
+msgid "Whether to receive PROXY protocol, when this node want to be fallback or forwarded by proxy, it must be enable, otherwise it cannot be used."
+msgstr "Whether to accept PROXY protocol. Must be enabled if this node is to be used for fallback or forwarded by a proxy, otherwise unusable."
+
+msgid "outbound node"
+msgstr "Outbound Node"
+
+msgid "Custom Socks"
+msgstr "Custom Socks"
+
+msgid "Custom HTTP"
+msgstr "Custom HTTP"
+
+msgid "Custom Interface"
+msgstr "Custom Interface"
+
+msgid "Interface"
+msgstr "Interface"
+
+msgid "Bind Local"
+msgstr "Bind to Localhost"
+
+msgid "When selected, it can only be accessed locally, It is recommended to turn on when using reverse proxies or be fallback."
+msgstr "When selected, it can only be accessed locally. Recommended when using reverse proxies or for fallback."
+
+msgid "Accept LAN Access"
+msgstr "Accept LAN Access"
+
+msgid "When selected, it can accessed lan , this will not be safe!"
+msgstr "When selected, it is accessible from LAN, which is not secure! (Not recommended except for special cases)."
+
+msgid "Enable Remote"
+msgstr "Enable Forwarding"
+
+msgid "You can forward to Nginx/Caddy/V2ray/Xray WebSocket and more."
+msgstr "You can forward to Nginx/Caddy/V2ray/Xray WebSocket, etc."
+
+msgid "Remote Address"
+msgstr "Remote Address"
+
+msgid "Remote Port"
+msgstr "Remote Port"
+
+msgid "as:"
+msgstr "e.g.:"
+
+msgid "Public key absolute path"
+msgstr "Public Key Absolute Path"
+
+msgid "Private key absolute path"
+msgstr "Private Key Absolute Path"
+
+msgid "Can't find this file!"
+msgstr "Cannot find this file!"
+
+msgid "Public key and Private key path can not be empty!"
+msgstr "Public key and Private key paths cannot be empty!"
+
+msgid "Server-Side"
+msgstr "Server-Side"
+
+msgid "Server Config"
+msgstr "Server Configuration"
+
+msgid "Users Manager"
+msgstr "User Management"
+
+msgid "Logs"
+msgstr "Logs"
+
+msgid "Log"
+msgstr "Log"
+
+msgid "%s Node Log Close"
+msgstr "%s Node Log Closed"
+
+msgid "Log Level"
+msgstr "Log Level"
+
+msgid "Advanced log feature"
+msgstr "Advanced Log Feature"
+
+msgid "For professionals only."
+msgstr "For professionals only."
+
+msgid "Persist log file directory"
+msgstr "Persistent Log File Directory"
+
+msgid "The path to the directory used to store persist log files, the "/" at the end can be omitted. Leave it blank to disable this feature."
+msgstr "Path to directory for storing persistent log files. Trailing "/" can be omitted. Leave blank to disable."
+
+msgid "Logging to system log"
+msgstr "Logging to System Log"
+
+msgid "Logging to the system log for more advanced functions. For example, send logs to a dedicated log server."
+msgstr "Log to system log for more advanced functions, e.g., sending logs to a dedicated log server."
+
+msgid "Not enabled log"
+msgstr "Log not enabled"
+
+msgid "UDP Forward"
+msgstr "UDP Forward"
+
+msgid "DNS Settings"
+msgstr "DNS Settings"
+
+msgid "Null"
+msgstr "None"
+
+msgid "You did not fill in the %s path. Please save and apply then update manually."
+msgstr "You did not fill in the %s path. Please save and apply, then update manually."
+
+msgid "Not installed unzip, Can't unzip!"
+msgstr "unzip not installed, cannot unzip!"
+
+msgid "Can't determine ARCH, or ARCH not supported."
+msgstr "Cannot determine ARCH, or ARCH not supported."
+
+msgid "Get remote version info failed."
+msgstr "Failed to get remote version info."
+
+msgid "New version found, but failed to get new version download url."
+msgstr "New version found, but failed to get its download URL."
+
+msgid "Download url is required."
+msgstr "Download URL is required."
+
+msgid "File download failed or timed out: %s"
+msgstr "File download failed or timed out: %s"
+
+msgid "File path required."
+msgstr "File path required."
+
+msgid "%s not enough space."
+msgstr "Insufficient space on %s."
+
+msgid "Can't find client in file: %s"
+msgstr "Cannot find client in file: %s"
+
+msgid "Client file is required."
+msgstr "Client file is required."
+
+msgid "The client file is not suitable for current device."
+msgstr "The client file is not suitable for the current device."
+
+msgid "Can't move new file to path: %s"
+msgstr "Cannot move new file to path: %s"
+
+msgid "Mux concurrency"
+msgstr "Mux Concurrency"
+
+msgid "XUDP Mux concurrency"
+msgstr "XUDP Mux Concurrency"
+
+msgid "Mux idle timeout"
+msgstr "Mux Idle Timeout"
+
+msgid "Enable early data"
+msgstr "Enable Early Data"
+
+msgid "Early data length"
+msgstr "Early Data Max Length"
+
+msgid "Early data header name"
+msgstr "Early Data HTTP Header Name"
+
+msgid "Recommended value: Sec-WebSocket-Protocol"
+msgstr "Recommended value: Sec-WebSocket-Protocol"
+
+msgid "Health check"
+msgstr "Health Check"
+
+msgid "Idle timeout"
+msgstr "Idle Timeout"
+
+msgid "Health check timeout"
+msgstr "Health Check Timeout"
+
+msgid "Permit without stream"
+msgstr "Health Check Without Sub-connections"
+
+msgid "Initial Windows Size"
+msgstr "Initial Window Size"
+
+msgid "No Sniffing Lists"
+msgstr "No Traffic Sniffing Domain List"
+
+msgid "Hosts added into No Sniffing Lists will not resolve again on server (Xray only)."
+msgstr "Domains added here will not be re-resolved on the server (Xray only)."
+
+msgid "Buffer Size (Xray)"
+msgstr "Buffer Size (Xray)"
+
+msgid "Buffer size for every connection (kB)"
+msgstr "Buffer size per connection (kB)"
+
+msgid "Handshake Timeout"
+msgstr "Handshake Timeout"
+
+msgid "Idle Timeout"
+msgstr "Idle Timeout"
+
+msgid "Hop Interval"
+msgstr "Port Hop Interval"
+
+msgid "Additional ports for hysteria hop"
+msgstr "Additional Ports for Hysteria Port Hop"

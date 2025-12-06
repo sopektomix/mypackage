@@ -9,13 +9,38 @@ local uci = require "luci.model.uci".cursor()
 local json = require "luci.jsonc"
 local datatypes = require "luci.cbi.datatypes"
 
+-- 优化 CBI UI（新版 LuCI 专用）
+local function optimize_cbi_ui()
+	luci.http.write([[
+		<script type="text/javascript">
+			// 修正上移、下移按钮名称
+			document.querySelectorAll("input.btn.cbi-button.cbi-button-up").forEach(function(btn) {
+				btn.value = "]] .. translate("Move up") .. [[";
+			});
+			document.querySelectorAll("input.btn.cbi-button.cbi-button-down").forEach(function(btn) {
+				btn.value = "]] .. translate("Move down") .. [[";
+			});
+			// 删除控件和说明之间的多余换行
+			document.querySelectorAll("div.cbi-value-description").forEach(function(descDiv) {
+				var prev = descDiv.previousSibling;
+				while (prev && prev.nodeType === Node.TEXT_NODE && prev.textContent.trim() === "") {
+					prev = prev.previousSibling;
+				}
+				if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === "BR") {
+					prev.remove();
+				}
+			});
+		</script>
+	]])
+end
+
 font_green = [[<b style=color:green>]]
 font_red = [[<b style=color:red>]]
 font_off = [[</b>]]
 bold_on  = [[<strong>]]
 bold_off = [[</strong>]]
 
-local op_mode = uci:get("openclash", "config", "operation_mode")
+local op_mode = fs.uci_get_config("config", "operation_mode")
 if not op_mode then op_mode = "redir-host" end
 local lan_ip = fs.lanip()
 m = Map("openclash", translate("Plugin Settings"))
@@ -27,7 +52,7 @@ m.description = translate("Note: To restore the default configuration, try acces
 "<br/>"..font_green..translate("Note: Game proxy please use nodes except VMess")..font_off..
 "<br/>"..font_green..translate("Note: If you need to perform client access control in Fake-IP mode, please change the DNS hijacking mode to firewall forwarding")..font_off..
 "<br/>"..translate("Note: The default proxy routes local traffic, BT, PT download, etc., please use Redir-Host mode as much as possible and pay attention to traffic avoidance")..
-"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..translate("Click to the page").."</a>"..
+"<br/>"..translate("Note: If the connection is abnormal, please follow the steps on this page to check first")..": ".."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://github.com/vernesong/OpenClash/wiki/%E7%BD%91%E7%BB%9C%E8%BF%9E%E6%8E%A5%E5%BC%82%E5%B8%B8%E6%97%B6%E6%8E%92%E6%9F%A5%E5%8E%9F%E5%9B%A0\")'>"..font_green..bold_on..translate("Click to the page")..bold_off..font_off.."</a>"..
 "<br/>"..font_green..translate("For More Useful Meta Core Functions Go Wiki")..": "..font_off.."<a href='javascript:void(0)' onclick='javascript:return winOpen(\"https://wiki.metacubex.one/\")'>"..translate("https://wiki.metacubex.one/").."</a>"
 
 s = m:section(TypedSection, "openclash")
@@ -77,7 +102,7 @@ o:depends("en_mode", "redir-host-mix")
 o:depends("en_mode", "fake-ip-mix")
 o:value("system", translate("System　"))
 o:value("gvisor", translate("gVisor"))
-o:value("mixed", translate("Mixed")..translate("(Only Meta Core)"))
+o:value("mixed", translate("Mixed"))
 o.default = "system"
 
 o = s:taboption("op_mode", ListValue, "proxy_mode", translate("Proxy Mode"))
@@ -104,10 +129,6 @@ o = s:taboption("op_mode", Flag, "disable_quic_go_gso", translate("Disable quic-
 o.description = font_red..bold_on..translate("Suggestion: If Encountering Issues With QUIC UDP on The Linux Kernel Version Above 6.6, Please Try to Enable.")..bold_off..font_off
 o.default = 0
 
-o = s:taboption("op_mode", Flag, "skip_safe_path_check", translate("Skip Safe Path Check"))
-o.description = font_red..bold_on..translate("Enable If You Want Using Files Not in /etc/openclash in You Config")..bold_off..font_off
-o.default = 0
-
 o = s:taboption("op_mode", Flag, "small_flash_memory", translate("Small Flash Memory"))
 o.description = translate("Move Core And GEOIP Data File To /tmp/etc/openclash For Small Flash Memory Device")
 o.default = 0
@@ -124,10 +145,8 @@ o:value("0", translate("Disable"))
 o:value("1", translate("Dnsmasq Redirect"))
 o:value("2", translate("Firewall Redirect"))
 
-if op_mode == "fake-ip" then
-o = s:taboption("dns", DummyValue, "flush_fakeip_cache", translate("Flush Fake-IP Cache"))
-o.template = "openclash/flush_fakeip_cache"
-end
+o = s:taboption("dns", DummyValue, "flush_dns_cache", translate("Flush DNS Cache"))
+o.template = "openclash/flush_dns_cache"
 
 o = s:taboption("dns", Flag, "enable_custom_domain_dns_server", translate("Enable Specify DNS Server"))
 o.default = 0
@@ -200,13 +219,19 @@ o.datatype = "ipmask"
 o.description = translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported")
 
 s2 = m:section(TypedSection, "lan_ac_traffic", translate("Lan Traffic Access List"),
-	"1."..translate("The Traffic From The Local Specified Port Will Not Pass The Core, Try To Set When The Bypass Gateway Forwarding Fails").."; ".."2."..translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported"))
+	"1. "..translate("The Traffic From The Local Specified Port Will Not Pass The Core, Try To Set When The Bypass Gateway Forwarding Fails").."; ".."2. "..translate("In The Fake-IP Mode, Only Pure IP Requests Are Supported, Please Setting Fake-IP-Filter First If You Need Domain Type Requests"))
 
 s2.template  = "cbi/tblsection"
 s2.sortable  = true
 s2.anonymous = true
 s2.addremove = true
 s2.rmempty = false
+s2.render = function(self, ...)
+	Map.render(self, ...)
+	if type(optimize_cbi_ui) == "function" then
+		optimize_cbi_ui()
+	end
+end
 
 o = s2:option(Value, "comment", translate("Comment"))
 o.rmempty = true
@@ -242,6 +267,20 @@ o:value("ipv6", translate("IPv6"))
 o:value("both", translate("Both"))
 o.default = "tcp"
 o.rmempty = false
+
+o = s2:option(Value, "dscp", translate("DSCP"))
+o.datatype = "range(0,63)"
+o.rmempty = true
+function o.validate(self, value)
+    if value == "" or value == nil then
+        return value
+    end
+    local num = tonumber(value)
+    if not num or num < 0 or num > 63 then
+        return nil, "DSCP must be between 0 and 63"
+    end
+    return value
+end
 
 o = s2:option(ListValue, "target", translate("Target"))
 o:value("return", translate("RETURN"))
@@ -819,7 +858,7 @@ o = s:taboption("rules_update", Button, translate("Other Rules Update"))
 o:depends("other_rule_auto_update", "1")
 o.title = translate("Update Other Rules")
 o.inputtitle = translate("Check And Update")
-o.description = translate("Other Rules Update(Only in Use)")
+o.description = translate("Other Rules Update(Only in Use)")..", "..translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/usr/share/openclash/res/lhie1.yaml"))..bold_off..font_off
 o.inputstyle = "reload"
 o.write = function()
   m.uci:set("openclash", "config", "enable", 1)
@@ -841,12 +880,14 @@ o:value("5", translate("Every Friday"))
 o:value("6", translate("Every Saturday"))
 o:value("0", translate("Every Sunday"))
 o.default = "1"
+o:depends("geo_auto_update", "1")
 
 o = s:taboption("geo_update", ListValue, "geo_update_day_time", translate("Update time (every day)"))
 for t = 0,23 do
 o:value(t, t..":00")
 end
 o.default = "0"
+o:depends("geo_auto_update", "1")
 
 o = s:taboption("geo_update", Value, "geo_custom_url")
 o.title = translate("Custom GeoIP MMDB URL")
@@ -856,9 +897,11 @@ o:value("https://testingcf.jsdelivr.net/gh/alecthw/mmdb_china_ip_list@release/li
 o:value("https://testingcf.jsdelivr.net/gh/alecthw/mmdb_china_ip_list@release/Country.mmdb", translate("Alecthw-Version")..translate("(All Info mmdb)"))
 o:value("https://testingcf.jsdelivr.net/gh/Hackl0us/GeoIP2-CN@release/Country.mmdb", translate("Hackl0us-Version")..translate("(Only CN)"))
 o.default = "https://testingcf.jsdelivr.net/gh/alecthw/mmdb_china_ip_list@release/lite/Country.mmdb"
+o:depends("geo_auto_update", "1")
 
 o = s:taboption("geo_update", Button, translate("GEOIP Update")) 
 o.title = translate("Update GeoIP MMDB")
+o.description = translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/etc/openclash/Country.mmdb"))..bold_off..font_off
 o.inputtitle = translate("Check And Update")
 o.inputstyle = "reload"
 o.write = function()
@@ -901,6 +944,7 @@ o:depends("geoip_auto_update", "1")
 
 o = s:taboption("geo_update", Button, translate("GEOIP Dat Update")) 
 o.title = translate("Update GeoIP Dat")
+o.description = translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/etc/openclash/GeoIP.dat"))..bold_off..font_off
 o.inputtitle = translate("Check And Update")
 o.inputstyle = "reload"
 o.write = function()
@@ -909,7 +953,6 @@ o.write = function()
   SYS.call("/usr/share/openclash/openclash_geoip.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-o:depends("geoip_auto_update", "1")
 
 o = s:taboption("geo_update", Flag, "geosite_auto_update", font_red..bold_on..translate("Auto Update GeoSite")..bold_off..font_off)
 o.default = 0
@@ -944,6 +987,7 @@ o:depends("geosite_auto_update", "1")
 
 o = s:taboption("geo_update", Button, translate("GEOSITE Update")) 
 o.title = translate("Update GeoSite Database")
+o.description = translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/etc/openclash/GeoSite.dat"))..bold_off..font_off
 o.inputtitle = translate("Check And Update")
 o.inputstyle = "reload"
 o.write = function()
@@ -952,7 +996,6 @@ o.write = function()
   SYS.call("/usr/share/openclash/openclash_geosite.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-o:depends("geosite_auto_update", "1")
 
 o = s:taboption("geo_update", Flag, "geoasn_auto_update", font_red..bold_on..translate("Auto Update Geo ASN")..bold_off..font_off)
 o.default = 0
@@ -977,7 +1020,7 @@ o.default = "0"
 o:depends("geoasn_auto_update", "1")
 
 o = s:taboption("geo_update", Value, "geoasn_custom_url")
-o.title = translate("Custom GeoSite URL")
+o.title = translate("Custom Geo ASN URL")
 o.rmempty = true
 o.description = translate("Custom Geo ASN Data URL, Click Button Below To Refresh After Edit")
 o:value("https://testingcf.jsdelivr.net/gh/xishang0128/geoip@release/GeoLite2-ASN.mmdb", translate("xishang0128-testingcf-jsdelivr-Version")..translate("(Default)"))
@@ -987,6 +1030,7 @@ o:depends("geoasn_auto_update", "1")
 
 o = s:taboption("geo_update", Button, translate("ASN Update")) 	
 o.title = translate("Update Geo ASN Database")
+o.description = translate("Current Version:").." "..font_green..bold_on..translate(fs.get_resourse_mtime("/etc/openclash/ASN.mmdb"))..bold_off..font_off
 o.inputtitle = translate("Check And Update")
 o.inputstyle = "reload"
 o.write = function()
@@ -995,7 +1039,6 @@ o.write = function()
   SYS.call("/usr/share/openclash/openclash_geoasn.sh >/dev/null 2>&1 &")
   HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
-o:depends("geoasn_auto_update", "1")
 
 o = s:taboption("chnr_update", Flag, "chnr_auto_update", translate("Auto Update"))
 o.description = translate("Auto Update Chnroute Lists")
@@ -1111,7 +1154,7 @@ o = s:taboption("dashboard", DummyValue, "Metacubexd", translate("Update Metacub
 o.template="openclash/switch_dashboard"
 o.rawhtml = true
 
-o = s:taboption("dashboard", DummyValue, "zashboard", translate("Update zashboard Version"))
+o = s:taboption("dashboard", DummyValue, "Zashboard", translate("Update Zashboard Version"))
 o.template="openclash/switch_dashboard"
 o.rawhtml = true
 
@@ -1123,8 +1166,8 @@ o.default = 0
 o = s:taboption("ipv6", ListValue, "ipv6_mode", translate("IPv6 Proxy Mode"))
 o:value("0", translate("TProxy Mode"))
 o:value("1", translate("Redirect Mode"))
-o:value("2", translate("TUN Mode")..translate("(Only Meta Core)"))
-o:value("3", translate("Mix Mode")..translate("(Only Meta Core)"))
+o:value("2", translate("TUN Mode"))
+o:value("3", translate("Mix Mode"))
 o.default = "0"
 o:depends("ipv6_enable", "1")
 
@@ -1136,7 +1179,7 @@ o:depends({ipv6_mode= "3", en_mode = "redir-host"})
 o:depends({ipv6_mode= "3", en_mode = "fake-ip"})
 o:value("system", translate("System　"))
 o:value("gvisor", translate("gVisor"))
-o:value("mixed", translate("Mixed")..translate("(Only Meta Core)"))
+o:value("mixed", translate("Mixed"))
 o.default = "system"
 
 o = s:taboption("ipv6", Flag, "enable_v6_udp_proxy", translate("Proxy UDP Traffics"))
@@ -1235,7 +1278,7 @@ o.title = translate("Account Password")
 o.password = true
 o.rmempty = true
 
-if m.uci:get("openclash", "config", "dler_token") then
+if fs.uci_get_config("config", "dler_token") then
 	o = s:taboption("dlercloud", Flag, "dler_checkin")
 	o.title = translate("Checkin")
 	o.default = 0
@@ -1254,20 +1297,20 @@ o.datatype = "uinteger"
 o.default = "1"
 o:depends("dler_checkin", "1")
 o.rmempty = true
-o.description = font_green..bold_on..translate("Multiple Must Be a Positive Integer and No More Than 50")..bold_off..font_off
+o.description = font_green..bold_on..translate("Multiple Must Be a Positive Integer and No More Than 100")..bold_off..font_off
 function o.validate(self, value)
 	if tonumber(value) < 1 then
 		return "1"
 	end
-	if tonumber(value) > 50 then
-		return "50"
+	if tonumber(value) > 100 then
+		return "100"
 	end
 	return value
 end
 
 o = s:taboption("dlercloud", DummyValue, "dler_login", translate("Account Login"))
 o.template = "openclash/dler_login"
-if m.uci:get("openclash", "config", "dler_token") then
+if fs.uci_get_config("config", "dler_token") then
 	o.value = font_green..bold_on..translate("Account logged in")..bold_off..font_off
 else
 	o.value = font_red..bold_on..translate("Account not logged in")..bold_off..font_off
@@ -1277,23 +1320,37 @@ local t = {
     {Commit, Apply}
 }
 
+local CORE_VERSION = HTTP.formvalue("CORE_VERSION")
+local RELEASE_BRANCH = HTTP.formvalue("RELEASE_BRANCH")
+local SMART_ENABLE = HTTP.formvalue("SMART_ENABLE")
+
 a = m:section(Table, t)
 
 o = a:option(Button, "Commit", " ")
 o.inputtitle = translate("Commit Settings")
 o.inputstyle = "apply"
 o.write = function()
-  m.uci:commit("openclash")
+    if CORE_VERSION and RELEASE_BRANCH and SMART_ENABLE then
+        m.uci:set("openclash", "config", "core_version", CORE_VERSION)
+        m.uci:set("openclash", "config", "release_branch", RELEASE_BRANCH)
+        m.uci:set("openclash", "config", "smart_enable", SMART_ENABLE)
+    end
+    m.uci:commit("openclash")
 end
 
 o = a:option(Button, "Apply", " ")
 o.inputtitle = translate("Apply Settings")
 o.inputstyle = "apply"
 o.write = function()
-  m.uci:set("openclash", "config", "enable", 1)
-  m.uci:commit("openclash")
-  SYS.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
-  HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
+    if CORE_VERSION and RELEASE_BRANCH and SMART_ENABLE then
+        m.uci:set("openclash", "config", "core_version", CORE_VERSION)
+        m.uci:set("openclash", "config", "release_branch", RELEASE_BRANCH)
+        m.uci:set("openclash", "config", "smart_enable", SMART_ENABLE)
+    end
+    m.uci:set("openclash", "config", "enable", 1)
+    m.uci:commit("openclash")
+    SYS.call("/etc/init.d/openclash restart >/dev/null 2>&1 &")
+    HTTP.redirect(DISP.build_url("admin", "services", "openclash"))
 end
 
 m:append(Template("openclash/config_editor"))
@@ -1301,5 +1358,3 @@ m:append(Template("openclash/toolbar_show"))
 m:append(Template("openclash/select_git_cdn"))
 
 return m
-
-

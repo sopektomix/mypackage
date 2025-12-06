@@ -1,0 +1,203 @@
+<%+header%>
+<div class="cbi-map">
+    <h2 name="content"><%:Pintas AT Command - Live Log%></h2>
+    <div class="cbi-section">
+        <div class="cbi-section-descr">
+            <%:Real-time execution log of AT commands%>
+        </div>
+        
+        <div class="cbi-section-node">
+            <div class="table" style="margin-bottom: 20px;">
+                <div class="tr">
+                    <div class="td">
+                        <button class="cbi-button cbi-button-action" onclick="executeCommand('AT+EGMR=0,7')">
+                            <%:Check IMEI%>
+                        </button>
+                    </div>
+                    <div class="td">
+                        <input type="text" id="new_imei" placeholder="Enter new IMEI" style="margin-right: 10px;">
+                        <button class="cbi-button cbi-button-apply" onclick="setIMEI()">
+                            <%:Set IMEI%>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table" style="margin-bottom: 20px;">
+                <h3><%:Network Mode Lock%></h3>
+                <div class="tr">
+                    <div class="td">
+                        <button class="cbi-button" onclick="executeCommand('AT+QNWPREFCFG=\"mode_pref\",NR5G+LTE')">
+                            <%:5G+LTE%>
+                        </button>
+                        <button class="cbi-button" onclick="executeCommand('AT+QNWPREFCFG=\"mode_pref\",NR5G')">
+                            <%:5G Only%>
+                        </button>
+                        <button class="cbi-button" onclick="executeCommand('AT+QNWPREFCFG=\"mode_pref\",LTE')">
+                            <%:LTE Only%>
+                        </button>
+                        <button class="cbi-button" onclick="executeCommand('AT+QNWPREFCFG=\"mode_pref\",AUTO')">
+                            <%:Auto%>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table" style="margin-bottom: 20px;">
+                <h3><%:USB Mode%></h3>
+                <div class="tr">
+                    <div class="td">
+                        <button class="cbi-button" onclick="executeCommand('AT+QCFG=\"usbnet\",0')">
+                            <%:QMI%>
+                        </button>
+                        <button class="cbi-button" onclick="executeCommand('AT+QCFG=\"usbnet\",2')">
+                            <%:MBIM%>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table" style="margin-bottom: 20px;">
+                <h3><%:Module Control%></h3>
+                <div class="tr">
+                    <div class="td">
+                        <button class="cbi-button cbi-button-reset" onclick="executeCommand('AT+CFUN=1,1')">
+                            <%:Reset Module%>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table" style="margin-bottom: 20px;">
+                <h3><%:Custom Command%></h3>
+                <div class="tr">
+                    <div class="td">
+                        <input type="text" id="custom_cmd" placeholder="AT+COMMAND" style="width: 300px; margin-right: 10px;">
+                        <button class="cbi-button cbi-button-save" onclick="executeCustom()">
+                            <%:Execute%>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cbi-value">
+                <label class="cbi-value-title"><%:Live Log Output%></label>
+                <div class="cbi-value-field">
+                    <textarea id="log_output" rows="15" style="width: 100%; font-family: monospace;" readonly></textarea>
+                    <div class="cbi-value-description">
+                        <button class="cbi-button" onclick="clearLog()"><%:Clear Log%></button>
+                        <button class="cbi-button" onclick="copyLog()"><%:Copy to Clipboard%></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let logHistory = [];
+    
+    function addLog(entry, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = `[${timestamp}] ${entry}`;
+        logHistory.push(logEntry);
+        
+        const logArea = document.getElementById('log_output');
+        logArea.value += logEntry + '\n';
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+    
+    function executeCommand(command) {
+        addLog(`Executing: ${command}`, 'command');
+        
+        fetch('<%=luci.dispatcher.build_url("admin/services/pintas/run")%>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'command=' + encodeURIComponent(command)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addLog(`Response: ${data.output}`, 'success');
+            } else {
+                addLog(`Error: ${data.error}`, 'error');
+            }
+        })
+        .catch(error => {
+            addLog(`Network error: ${error}`, 'error');
+        });
+    }
+    
+    function setIMEI() {
+        const imei = document.getElementById('new_imei').value;
+        if (imei.match(/^\d{15}$/)) {
+            executeCommand(`AT+EGMR=1,7,"${imei}"`);
+        } else {
+            addLog('Invalid IMEI format. Must be 15 digits.', 'error');
+        }
+    }
+    
+    function executeCustom() {
+        const cmd = document.getElementById('custom_cmd').value;
+        if (cmd.trim()) {
+            executeCommand(cmd);
+        }
+    }
+    
+    function clearLog() {
+        document.getElementById('log_output').value = '';
+        logHistory = [];
+        addLog('Log cleared', 'info');
+    }
+    
+    function copyLog() {
+        const logArea = document.getElementById('log_output');
+        logArea.select();
+        document.execCommand('copy');
+        addLog('Log copied to clipboard', 'info');
+    }
+    
+    // Initialize with welcome message
+    window.onload = function() {
+        addLog('Pintas AT Command Interface Ready', 'info');
+        addLog('Select a command to begin...', 'info');
+    }
+</script>
+
+<style>
+    .cbi-button {
+        margin: 2px;
+    }
+    
+    .cbi-button-action {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .cbi-button-apply {
+        background-color: #2196F3;
+        color: white;
+    }
+    
+    .cbi-button-save {
+        background-color: #FF9800;
+        color: white;
+    }
+    
+    .cbi-button-reset {
+        background-color: #f44336;
+        color: white;
+    }
+    
+    #log_output {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 10px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+</style>
+
+<%+footer%>

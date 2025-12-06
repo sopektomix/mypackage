@@ -1,0 +1,248 @@
+#!/bin/sh
+# FamilyControl FULL BLOCK mode
+# Kill-switch per device (IPv4 + IPv6) via nftables
+# 2024-2025 sopeksemprit <sopeksemprit.xyz>
+
+NAME="familycontrol"
+LOG_FILE="/var/log/$NAME.log"
+
+# Detect dnsmasq extra config directory (OpenWrt 23/24/24.10, multi-instance safe)
+DNSMASQ_CONF="$(ls /var/etc/dnsmasq.conf* 2>/dev/null | head -n1)"
+[ -z "$DNSMASQ_CONF" ] && DNSMASQ_CONF="/var/etc/dnsmasq.conf"
+
+if [ -f "$DNSMASQ_CONF" ]; then
+	DNSMASQ_CONFDIR="$(grep -m1 '^conf-dir=' "$DNSMASQ_CONF" 2>/dev/null | cut -d'=' -f2 | cut -d',' -f1)"
+fi
+
+# Fallback kalau conf-dir tak wujud / lama
+[ -z "$DNSMASQ_CONFDIR" ] && [ -d "/tmp/dnsmasq.d" ] && DNSMASQ_CONFDIR="/tmp/dnsmasq.d"
+[ -z "$DNSMASQ_CONFDIR" ] && DNSMASQ_CONFDIR="/var/etc/dnsmasq.d"
+
+URL_CONF="$DNSMASQ_CONFDIR/$NAME.conf"
+
+nft_bin="$(command -v nft 2>/dev/null)"
+
+log_msg() {
+	local msg="$1"
+	local ts
+	ts="$(date '+%Y-%m-%d %H:%M:%S')"
+	mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null
+	echo "[$ts] $msg" >> "$LOG_FILE"
+}
+
+ensure_nft() {
+	if [ -z "$nft_bin" ]; then
+		log_msg "nft not found, aborting"
+		exit 1
+	fi
+}
+
+fw_clear() {
+	ensure_nft
+	$nft_bin delete table inet  familycontrol 2>/dev/null
+	$nft_bin delete table ip    familycontrol 2>/dev/null
+	$nft_bin delete table ip6   familycontrol 2>/dev/null
+	$nft_bin delete table bridge familycontrol 2>/dev/null
+	log_msg "FamilyControl firewall rules cleared"
+}
+
+fw_init() {
+	ensure_nft
+
+	$nft_bin add table inet familycontrol 2>/dev/null
+
+	$nft_bin 'add set inet familycontrol family_block_v4 { type ipv4_addr; flags interval; }' 2>/dev/null
+	$nft_bin 'add set inet familycontrol family_block_v6 { type ipv6_addr; flags interval; }' 2>/dev/null
+
+	$nft_bin 'add chain inet familycontrol forward { type filter hook forward priority -100; policy accept; }' 2>/dev/null
+
+	$nft_bin 'add rule inet familycontrol forward ip saddr  @family_block_v4 drop' 2>/dev/null
+	$nft_bin 'add rule inet familycontrol forward ip daddr  @family_block_v4 drop' 2>/dev/null
+	$nft_bin 'add rule inet familycontrol forward ip6 saddr @family_block_v6 drop' 2>/dev/null
+	$nft_bin 'add rule inet familycontrol forward ip6 daddr @family_block_v6 drop' 2>/dev/null
+
+	# Block QUIC & DNS-over-TLS
+	$nft_bin 'add rule inet familycontrol forward udp dport 443 drop' 2>/dev/null
+	$nft_bin 'add rule inet familycontrol forward udp dport 853 drop' 2>/dev/null
+	$nft_bin 'add rule inet familycontrol forward tcp dport 853 drop' 2>/dev/null
+
+	log_msg "FamilyControl firewall initialized (FULL BLOCK mode)"
+}
+
+add_target() {
+	ensure_nft
+	local id="$1"
+	[ -z "$id" ] && return 0
+
+	local target
+	target="$(uci -q get $NAME.@device[$id].mac)"
+	[ -z "$target" ] && return 0
+
+	if echo "$target" | grep -q ":"; then
+		$nft_bin "add element inet familycontrol family_block_v6 { $target }" 2>/dev/null
+		log_msg "Add target IPv6: $target (id $id)"
+	elif echo "$target" | grep -q '\.'; then
+		$nft_bin "add element inet familycontrol family_block_v4 { $target }" 2>/dev/null
+		log_msg "Add target IPv4: $target (id $id)"
+	else
+		log_msg "Invalid target ignored: $target"
+	fi
+}
+
+del_target() {
+	ensure_nft
+	local id="$1"
+	[ -z "$id" ] && return 0
+
+	local target
+	target="$(uci -q get $NAME.@device[$id].mac)"
+	[ -z "$target" ] && return 0
+
+	if echo "$target" | grep -q ":"; then
+		$nft_bin "delete element inet familycontrol family_block_v6 { $target }" 2>/dev/null
+		log_msg "Delete target IPv6: $target (id $id)"
+	elif echo "$target" | grep -q '\.'; then
+		$nft_bin "delete element inet familycontrol family_block_v4 { $target }" 2>/dev/null
+		log_msg "Delete target IPv4: $target (id $id)"
+	else
+		log_msg "Invalid delete ignored: $target"
+	fi
+}
+
+url_clear() {
+	mkdir -p "$DNSMASQ_CONFDIR" 2>/dev/null
+	: >"$URL_CONF"
+	log_msg "URL blocklist cleared"
+}
+
+# ------------ FIXED URL TIME CHECK 100% STABLE -------------
+
+url_time_in_range() {
+	local start="$1"
+	local end="$2"
+	local now
+
+	[ -z "$start" ] && start="00:00"
+	[ -z "$end" ] && end="00:00"
+
+	case "$start" in *:*) ;; *) start="00:00" ;; esac
+	case "$end"   in *:*) ;; *) end="00:00" ;; esac
+
+	now="$(date +%H:%M)"
+
+	# start == end → 24 jam aktif
+	[ "$start" = "$end" ] && return 0
+
+	# Compare string sebab format HH:MM, jadi lexicographically betul
+	if [ "$start" \< "$end" ]; then
+		[ "$now" \> "$start" ] && [ "$now" \< "$end" ]
+		return $?
+	fi
+
+	# overnight (contoh: 23:00 → 06:00)
+	[ "$now" \> "$start" ] || [ "$now" \< "$end" ]
+}
+
+url_week_match() {
+
+	local week_cfg="$1"
+	local dow
+	dow="$(date +%u)"
+
+	[ -z "$week_cfg" ] && week_cfg="0"
+
+	# 0 = everyday
+	[ "$week_cfg" = "0" ] && return 0
+
+	local part
+	week_cfg="${week_cfg//,/ }"
+	for part in $week_cfg; do
+		[ "$part" = "$dow" ] && return 0
+	done
+
+	return 1
+}
+
+# ------------ FIXED URL REBUILD -------------
+
+url_rebuild() {
+	mkdir -p "$DNSMASQ_CONFDIR" 2>/dev/null
+	: >"$URL_CONF"
+
+	local idx=0
+	while uci -q get $NAME.@urlcontrol[$idx] >/dev/null 2>&1; do
+		local en domains topdomain ts te wk
+
+		en="$(uci -q get $NAME.@urlcontrol[$idx].enable)"
+		[ "$en" != "1" ] && { idx=$((idx+1)); continue; }
+
+		domains="$(uci -q get $NAME.@urlcontrol[$idx].domains)"
+		[ -z "$domains" ] && domains="$(uci -q get $NAME.@urlcontrol[$idx].domain)"
+
+		topdomain="$(uci -q get $NAME.@urlcontrol[$idx].topdomain)"
+		[ -z "$topdomain" ] && topdomain="$(uci -q get $NAME.@urlcontrol[$idx].top)"
+
+		ts="$(uci -q get $NAME.@urlcontrol[$idx].timestart)"
+		te="$(uci -q get $NAME.@urlcontrol[$idx].timeend)"
+		wk="$(uci -q get $NAME.@urlcontrol[$idx].week)"
+
+		[ -z "$ts" ] && ts="00:00"
+		[ -z "$te" ] && te="00:00"
+		[ -z "$wk" ] && wk="0"
+
+		url_week_match "$wk" || { idx=$((idx+1)); continue; }
+		url_time_in_range "$ts" "$te" || { idx=$((idx+1)); continue; }
+
+		local all=""
+		[ -n "$domains" ] && all="$domains"
+		[ -n "$topdomain" ] && all="${all:+$all,}$topdomain"
+
+		[ -z "$all" ] && { idx=$((idx+1)); continue; }
+
+		all="$(echo "$all" | tr ',' ' ')"
+		for d in $all; do
+			[ -z "$d" ] && continue
+			echo "address=/$d/0.0.0.0" >>"$URL_CONF"
+			echo "address=/$d/::"     >>"$URL_CONF"
+			log_msg "[URL-BLOCK] $d"
+		done
+
+		idx=$((idx+1))
+	done
+
+	/etc/init.d/dnsmasq restart >/dev/null 2>&1 || true
+	log_msg "URL blocklist rebuilt"
+}
+
+# ================= MAIN =================
+
+cmd="$1"
+id="$2"
+
+case "$cmd" in
+	start)
+		fw_clear
+		fw_init
+		url_clear
+		url_rebuild
+		log_msg "FamilyControl started"
+		;;
+	stop)
+		fw_clear
+		url_clear
+		;;
+	add)
+		add_target "$id"
+		;;
+	del)
+		del_target "$id"
+		;;
+	url)
+		url_rebuild
+		;;
+	*)
+		echo "Usage: $0 {start|stop|add ID|del ID|url}"
+		exit 1
+		;;
+esac
+

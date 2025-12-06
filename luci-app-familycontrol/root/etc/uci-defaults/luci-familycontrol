@@ -1,0 +1,52 @@
+#!/bin/sh
+# Copyright 2024-2025 sopeksemprit <sopeksemprit.xyz>
+
+chmod +x /etc/init.d/familycontrol /usr/bin/familycontrol*
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@familycontrol[-1]
+	add ucitrack familycontrol
+	set ucitrack.@familycontrol[-1].init=familycontrol
+	commit ucitrack
+EOF
+
+[ -s /etc/config/familycontrol ] || {
+cat <<-EOF > /etc/config/familycontrol
+
+config familycontrol
+	option enabled '0'
+	option control_mode 'blacklist'
+	option list_type 'blacklist'
+	option chain 'input'
+
+config device
+	option comment 'Default example'
+	option timestart '00:00'
+	option timeend '23:55'
+	option week '0'
+	option mac ''
+	option enable '0'
+
+config device
+	option comment 'Example subnet control'
+	option mac '192.168.10.10/24'
+	option timestart '00:00'
+	option timeend '00:00'
+	option week '0'
+	option enable '0'
+
+config urlcontrol
+	option comment 'Block sample sites globally'
+	option enable '0'
+	option device ''
+	option domains 'facebook.com,youtube.com'
+	option week '0'
+	option timestart '00:00'
+	option timeend '23:55'
+
+EOF
+}
+
+rm -f /tmp/luci-indexcache
+exit 0
+

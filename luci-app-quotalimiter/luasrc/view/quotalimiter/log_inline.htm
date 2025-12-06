@@ -1,0 +1,83 @@
+<%#
+  Inline log section for luci-app-quotalimiter
+%>
+
+<%
+local fs  = require "nixio.fs"
+local uci = require "luci.model.uci".cursor()
+
+local log_path = uci:get("quotalimiter", "settings", "log_file") or "/var/log/quotalimiter.log"
+local data = ""
+
+if fs.access(log_path) then
+    data = fs.readfile(log_path) or ""
+end
+
+-- Get last 50 lines
+local lines = {}
+for line in data:gmatch("[^\r\n]+") do
+    table.insert(lines, line)
+end
+local recent = ""
+for i = math.max(1, #lines - 50), #lines do
+    recent = recent .. lines[i] .. "\n"
+end
+
+if recent == "" then
+    recent = "Log file is empty. Service may not be running or no activity yet."
+end
+%>
+
+<div class="cbi-section">
+  <h3><%:Recent Logs (Last 50 lines)%></h3>
+  <div style="margin-bottom:10px;">
+    <button class="btn cbi-button cbi-button-action" onclick="refreshLog()">
+      <%:Refresh Log%>
+    </button>
+    <button class="btn cbi-button cbi-button-reset" onclick="clearLog()">
+      <%:Clear Log%>
+    </button>
+    <button class="btn cbi-button" onclick="downloadLog()" style="margin-left:10px;">
+      <%:Download Log%>
+    </button>
+  </div>
+  <textarea id="quotalimiter_log" 
+            style="width:100%;height:260px;font-family:'Courier New',monospace;font-size:12px;background:#f8f9fa;"
+            readonly="readonly"><%=recent%></textarea>
+  <div style="margin-top:5px;font-size:11px;color:#666;">
+    Log file: <%=log_path%> | Last update: <%=os.date("%Y-%m-%d %H:%M:%S")%>
+  </div>
+</div>
+
+<script>
+function refreshLog() {
+    document.getElementById('quotalimiter_log').value = 'Refreshing...';
+    fetch('<%=luci.dispatcher.build_url("admin/services/quotalimiter/log")%>')
+        .then(response => response.text())
+        .then(data => {
+            let lines = data.split('\n');
+            let recent = lines.slice(Math.max(lines.length - 50, 0)).join('\n');
+            if (recent.trim() === '') {
+                recent = 'Log file is empty. Service may not be running or no activity yet.';
+            }
+            document.getElementById('quotalimiter_log').value = recent;
+        })
+        .catch(error => {
+            document.getElementById('quotalimiter_log').value = 'Error fetching log: ' + error;
+        });
+}
+
+function clearLog() {
+    if(confirm('<%:Are you sure you want to clear the log?%>')) {
+        fetch('<%=luci.dispatcher.build_url("admin/services/quotalimiter/clear_log")%>')
+            .then(() => refreshLog());
+    }
+}
+
+function downloadLog() {
+    window.open('<%=luci.dispatcher.build_url("admin/services/quotalimiter/log")%>', '_blank');
+}
+
+// Auto-refresh every 10 seconds
+setInterval(refreshLog, 10000);
+</script>

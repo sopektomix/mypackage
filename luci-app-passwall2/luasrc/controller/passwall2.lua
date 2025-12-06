@@ -1,9 +1,9 @@
--- Copyright (C) 2022-2025 xiaorouji
-
+-- Copyright (C) 2022-2025
 module("luci.controller.passwall2", package.seeall)
+
 local api = require "luci.passwall2.api"
-local appname = api.appname		-- not available
-local uci = api.uci				-- in funtion index()
+local appname = api.appname
+local uci = api.uci
 local http = require "luci.http"
 local util = require "luci.util"
 local i18n = require "luci.i18n"
@@ -14,91 +14,96 @@ function index()
 	if not nixio.fs.access("/etc/config/passwall2") then
 		if nixio.fs.access("/usr/share/passwall2/0_default_config") then
 			luci.sys.call('cp -f /usr/share/passwall2/0_default_config /etc/config/passwall2')
-		else return end
+		else
+			return
+		end
 	end
-	local api = require "luci.passwall2.api"
-	local appname = api.appname		-- global definitions not available
-	local uci = api.uci				-- in function index()
-	entry({"admin", "services", appname}).dependent = true
-	entry({"admin", "services", appname, "reset_config"}, call("reset_config")).leaf = true
-	entry({"admin", "services", appname, "show"}, call("show_menu")).leaf = true
-	entry({"admin", "services", appname, "hide"}, call("hide_menu")).leaf = true
+
+	-- Root menu
+	entry({"admin", "vpn", appname}).dependent = true
+	entry({"admin", "vpn", appname, "reset_config"}, call("reset_config")).leaf = true
+	entry({"admin", "vpn", appname, "show"}, call("show_menu")).leaf = true
+	entry({"admin", "vpn", appname, "hide"}, call("hide_menu")).leaf = true
+
+	-- Title
 	local e
 	if uci:get(appname, "@global[0]", "hide_from_luci") ~= "1" then
-		e = entry({"admin", "services", appname}, alias("admin", "services", appname, "settings"), _("PassWall 2"), 0)
+		e = entry({"admin", "vpn", appname}, alias("admin", "vpn", appname, "settings"), _("PassWall 2"), 0)
 	else
-		e = entry({"admin", "services", appname}, alias("admin", "services", appname, "settings"), nil, 0)
+		e = entry({"admin", "vpn", appname}, alias("admin", "vpn", appname, "settings"), nil, 0)
 	end
 	e.dependent = true
 	e.acl_depends = { "luci-app-passwall2" }
-	--[[ Client ]]
-	entry({"admin", "services", appname, "settings"}, cbi(appname .. "/client/global"), _("Basic Settings"), 1).dependent = true
-	entry({"admin", "services", appname, "node_list"}, cbi(appname .. "/client/node_list"), _("Node List"), 2).dependent = true
-	entry({"admin", "services", appname, "node_subscribe"}, cbi(appname .. "/client/node_subscribe"), _("Node Subscribe"), 3).dependent = true
-	entry({"admin", "services", appname, "other"}, cbi(appname .. "/client/other", {autoapply = true}), _("Other Settings"), 92).leaf = true
+
+	----------------------------------------------------------------
+	-- CLIENT SECTION
+	----------------------------------------------------------------
+	entry({"admin", "vpn", appname, "settings"}, cbi(appname .. "/client/global"), _("Basic Settings"), 1).dependent = true
+	entry({"admin", "vpn", appname, "node_list"}, cbi(appname .. "/client/node_list"), _("Node List"), 2).dependent = true
+	entry({"admin", "vpn", appname, "node_subscribe"}, cbi(appname .. "/client/node_subscribe"), _("Node Subscribe"), 3).dependent = true
+	entry({"admin", "vpn", appname, "other"}, cbi(appname .. "/client/other", { autoapply = true }), _("Other Settings"), 92).leaf = true
+
 	if nixio.fs.access("/usr/sbin/haproxy") then
-		entry({"admin", "services", appname, "haproxy"}, cbi(appname .. "/client/haproxy"), _("Load Balancing"), 93).leaf = true
+		entry({"admin", "vpn", appname, "haproxy"}, cbi(appname .. "/client/haproxy"), _("Load Balancing"), 93).leaf = true
 	end
-	entry({"admin", "services", appname, "app_update"}, cbi(appname .. "/client/app_update"), _("App Update"), 95).leaf = true
-	entry({"admin", "services", appname, "rule"}, cbi(appname .. "/client/rule"), _("Rule Manage"), 96).leaf = true
-	entry({"admin", "services", appname, "geoview"}, form(appname .. "/client/geoview"), _("Geo View"), 97).leaf = true
-	entry({"admin", "services", appname, "node_subscribe_config"}, cbi(appname .. "/client/node_subscribe_config")).leaf = true
-	entry({"admin", "services", appname, "node_config"}, cbi(appname .. "/client/node_config")).leaf = true
-	entry({"admin", "services", appname, "shunt_rules"}, cbi(appname .. "/client/shunt_rules")).leaf = true
-	entry({"admin", "services", appname, "socks_config"}, cbi(appname .. "/client/socks_config")).leaf = true
-	entry({"admin", "services", appname, "acl"}, cbi(appname .. "/client/acl"), _("Access control"), 98).leaf = true
-	entry({"admin", "services", appname, "acl_config"}, cbi(appname .. "/client/acl_config")).leaf = true
-	entry({"admin", "services", appname, "log"}, form(appname .. "/client/log"), _("Watch Logs"), 999).leaf = true
 
-	--[[ Server ]]
-	entry({"admin", "services", appname, "server"}, cbi(appname .. "/server/index"), _("Server-Side"), 99).leaf = true
-	entry({"admin", "services", appname, "server_user"}, cbi(appname .. "/server/user")).leaf = true
+	entry({"admin", "vpn", appname, "app_update"}, cbi(appname .. "/client/app_update"), _("App Update"), 95).leaf = true
+	entry({"admin", "vpn", appname, "rule"}, cbi(appname .. "/client/rule"), _("Rule Manage"), 96).leaf = true
+	entry({"admin", "vpn", appname, "geoview"}, form(appname .. "/client/geoview"), _("Geo View"), 97).leaf = true
+	entry({"admin", "vpn", appname, "node_subscribe_config"}, cbi(appname .. "/client/node_subscribe_config")).leaf = true
+	entry({"admin", "vpn", appname, "node_config"}, cbi(appname .. "/client/node_config")).leaf = true
+	entry({"admin", "vpn", appname, "shunt_rules"}, cbi(appname .. "/client/shunt_rules")).leaf = true
+	entry({"admin", "vpn", appname, "socks_config"}, cbi(appname .. "/client/socks_config")).leaf = true
+	entry({"admin", "vpn", appname, "acl"}, cbi(appname .. "/client/acl"), _("Access control"), 98).leaf = true
+	entry({"admin", "vpn", appname, "acl_config"}, cbi(appname .. "/client/acl_config")).leaf = true
+	entry({"admin", "vpn", appname, "log"}, form(appname .. "/client/log"), _("Watch Logs"), 999).leaf = true
 
-	--[[ API ]]
-	entry({"admin", "services", appname, "server_user_status"}, call("server_user_status")).leaf = true
-	entry({"admin", "services", appname, "server_user_log"}, call("server_user_log")).leaf = true
-	entry({"admin", "services", appname, "server_get_log"}, call("server_get_log")).leaf = true
-	entry({"admin", "services", appname, "server_clear_log"}, call("server_clear_log")).leaf = true
-	entry({"admin", "services", appname, "link_add_node"}, call("link_add_node")).leaf = true
-	entry({"admin", "services", appname, "socks_autoswitch_add_node"}, call("socks_autoswitch_add_node")).leaf = true
-	entry({"admin", "services", appname, "socks_autoswitch_remove_node"}, call("socks_autoswitch_remove_node")).leaf = true
-	entry({"admin", "services", appname, "gen_client_config"}, call("gen_client_config")).leaf = true
-	entry({"admin", "services", appname, "get_now_use_node"}, call("get_now_use_node")).leaf = true
-	entry({"admin", "services", appname, "get_redir_log"}, call("get_redir_log")).leaf = true
-	entry({"admin", "services", appname, "get_socks_log"}, call("get_socks_log")).leaf = true
-	entry({"admin", "services", appname, "get_log"}, call("get_log")).leaf = true
-	entry({"admin", "services", appname, "clear_log"}, call("clear_log")).leaf = true
-	entry({"admin", "services", appname, "index_status"}, call("index_status")).leaf = true
-	entry({"admin", "services", appname, "haproxy_status"}, call("haproxy_status")).leaf = true
-	entry({"admin", "services", appname, "socks_status"}, call("socks_status")).leaf = true
-	entry({"admin", "services", appname, "connect_status"}, call("connect_status")).leaf = true
-	entry({"admin", "services", appname, "ping_node"}, call("ping_node")).leaf = true
-	entry({"admin", "services", appname, "urltest_node"}, call("urltest_node")).leaf = true
-	entry({"admin", "services", appname, "set_node"}, call("set_node")).leaf = true
-	entry({"admin", "services", appname, "copy_node"}, call("copy_node")).leaf = true
-	entry({"admin", "services", appname, "clear_all_nodes"}, call("clear_all_nodes")).leaf = true
-	entry({"admin", "services", appname, "delete_select_nodes"}, call("delete_select_nodes")).leaf = true
-	entry({"admin", "services", appname, "update_rules"}, call("update_rules")).leaf = true
-	entry({"admin", "services", appname, "subscribe_del_node"}, call("subscribe_del_node")).leaf = true
-	entry({"admin", "services", appname, "subscribe_del_all"}, call("subscribe_del_all")).leaf = true
-	entry({"admin", "services", appname, "subscribe_manual"}, call("subscribe_manual")).leaf = true
-	entry({"admin", "services", appname, "subscribe_manual_all"}, call("subscribe_manual_all")).leaf = true
+	----------------------------------------------------------------
+	-- SERVER SECTION
+	----------------------------------------------------------------
+	entry({"admin", "vpn", appname, "server"}, cbi(appname .. "/server/index"), _("Server-Side"), 99).leaf = true
+	entry({"admin", "vpn", appname, "server_user"}, cbi(appname .. "/server/user")).leaf = true
 
-	--[[Components update]]
-	entry({"admin", "services", appname, "check_passwall2"}, call("app_check")).leaf = true
+	----------------------------------------------------------------
+	-- API SECTION (SEMUA PINDAH KE admin/vpn)
+	----------------------------------------------------------------
+	local apis = {
+		"server_user_status", "server_user_log", "server_get_log",
+		"server_clear_log", "link_add_node", "socks_autoswitch_add_node",
+		"socks_autoswitch_remove_node", "gen_client_config", "get_now_use_node",
+		"get_redir_log", "get_socks_log", "get_log", "clear_log",
+		"index_status", "haproxy_status", "socks_status", "connect_status",
+		"ping_node", "urltest_node", "set_node", "copy_node",
+		"clear_all_nodes", "delete_select_nodes", "update_rules",
+		"subscribe_del_node", "subscribe_del_all", "subscribe_manual",
+		"subscribe_manual_all"
+	}
+
+	for _, api_name in ipairs(apis) do
+		entry({"admin", "vpn", appname, api_name}, call(api_name)).leaf = true
+	end
+
+	----------------------------------------------------------------
+	-- COMPONENTS UPDATE
+	----------------------------------------------------------------
+	entry({"admin", "vpn", appname, "check_passwall2"}, call("app_check")).leaf = true
+
 	local coms = require "luci.passwall2.com"
-	local com
 	for com, _ in pairs(coms) do
-		entry({"admin", "services", appname, "check_" .. com}, call("com_check", com)).leaf = true
-		entry({"admin", "services", appname, "update_" .. com}, call("com_update", com)).leaf = true
+		entry({"admin", "vpn", appname, "check_" .. com}, call("com_check", com)).leaf = true
+		entry({"admin", "vpn", appname, "update_" .. com}, call("com_update", com)).leaf = true
 	end
 
-	--[[Backup]]
-	entry({"admin", "services", appname, "create_backup"}, call("create_backup")).leaf = true
-	entry({"admin", "services", appname, "restore_backup"}, call("restore_backup")).leaf = true
+	----------------------------------------------------------------
+	-- BACKUP
+	----------------------------------------------------------------
+	entry({"admin", "vpn", appname, "create_backup"}, call("create_backup")).leaf = true
+	entry({"admin", "vpn", appname, "restore_backup"}, call("restore_backup")).leaf = true
 
-	--[[geoview]]
-	entry({"admin", "services", appname, "geo_view"}, call("geo_view")).leaf = true
+	----------------------------------------------------------------
+	-- GEOVIEW
+	----------------------------------------------------------------
+	entry({"admin", "vpn", appname, "geo_view"}, call("geo_view")).leaf = true
 end
 
 local function http_write_json(content)

@@ -1,0 +1,473 @@
+<%#
+  Status indicator for luci-app-quotalimiter
+%>
+
+<%
+local sys  = require "luci.sys"
+local uci  = require "luci.model.uci".cursor()
+local fs   = require "nixio.fs"
+
+local enabled = uci:get("quotalimiter", "settings", "enabled") or "0"
+local backend = uci:get("quotalimiter", "settings", "backend") or "auto"
+local poll_interval = uci:get("quotalimiter", "settings", "poll_interval") or "30"
+local log_file = uci:get("quotalimiter", "settings", "log_file") or "/var/log/quotalimiter.log"
+
+-- Check if service is running properly
+local running = false
+local daemon_pid = sys.exec("pgrep -f 'quotalimiter.sh daemon' 2>/dev/null")
+if daemon_pid and daemon_pid ~= "" then
+    running = true
+end
+
+-- Count devices from config
+local total_devices = 0
+local enabled_devices = 0
+local blocked_devices = 0
+local devices_with_quota = 0
+
+uci:foreach("quotalimiter", "quota",
+    function(s)
+        total_devices = total_devices + 1
+        if s.enabled == "1" then
+            enabled_devices = enabled_devices + 1
+            
+            local mac = s.mac or ""
+            local ip = s.ip or ""
+            local limit = s.limit or "0"
+            
+            -- Count devices with quota set
+            if tonumber(limit) > 0 then
+                devices_with_quota = devices_with_quota + 1
+            end
+            
+            -- Check if device is blocked (only if has MAC)
+            if mac ~= "" then
+                -- Check iptables
+                local check_cmd = string.format("iptables -nL FORWARD 2>/dev/null | grep -i '%s' | grep -c DROP", mac)
+                local check = sys.exec(check_cmd) or "0"
+                
+                -- Check nftables if iptables has no rules
+                if tonumber(check) == 0 and backend == "nftables" then
+                    check_cmd = string.format("nft list chain inet fw4 forward 2>/dev/null | grep -i '%s' | grep -c drop", mac)
+                    check = sys.exec(check_cmd) or "0"
+                end
+                
+                if tonumber(check) > 0 then
+                    blocked_devices = blocked_devices + 1
+                end
+            end
+        end
+    end
+)
+
+-- Get log file info
+local log_exists = fs.access(log_file)
+local log_size = 0
+local log_lines = 0
+
+if log_exists then
+    local stat = fs.stat(log_file)
+    log_size = stat and stat.size or 0
+    
+    -- Count lines
+    local count_cmd = string.format("wc -l '%s' 2>/dev/null | awk '{print $1}'", log_file)
+    log_lines = tonumber(sys.exec(count_cmd) or "0") or 0
+end
+
+-- Get database info
+local db_file = "/var/lib/quotalimiter.db"
+local db_exists = fs.access(db_file)
+local db_size = 0
+
+if db_exists then
+    local stat = fs.stat(db_file)
+    db_size = stat and stat.size or 0
+end
+
+-- Get system uptime if service is running
+local uptime = ""
+if running then
+    local pid = daemon_pid:match("(%d+)")
+    if pid then
+        local uptime_cmd = string.format("ps -o etime= -p %s 2>/dev/null", pid)
+        uptime = sys.exec(uptime_cmd) or ""
+        uptime = uptime:gsub("^%s+", ""):gsub("%s+$", "")
+    end
+end
+
+-- Check if init script is enabled
+local init_enabled = false
+local init_check = sys.exec("/etc/init.d/quotalimiter enabled 2>/dev/null")
+if init_check and init_check:match("enabled") then
+    init_enabled = true
+end
+%>
+
+<div class="cbi-section">
+  <h3><%:Service Status%></h3>
+  
+  <!-- Status Cards -->
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">
+    
+    <!-- Service Status Card -->
+    <div style="border:1px solid #ddd; border-radius:6px; padding:15px; background:#f9f9f9;">
+      <div style="font-weight:bold; margin-bottom:8px; color:#333;">
+        <i class="icon icon-play" style="margin-right:5px;"></i> <%:Service Status%>
+      </div>
+      <div style="font-size:18px; font-weight:bold; margin-bottom:5px;">
+        <% if enabled ~= "1" then %>
+          <span style="color:#777;"><%:Disabled%></span>
+        <% elseif running then %>
+          <span style="color:#3c763d;"><%:Running%></span>
+        <% else %>
+          <span style="color:#a94442;"><%:Stopped%></span>
+        <% end %>
+      </div>
+      <% if running and uptime ~= "" then %>
+        <div style="font-size:12px; color:#666;">
+          <%:Uptime%>: <%=uptime%>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Backend Card -->
+    <div style="border:1px solid #ddd; border-radius:6px; padding:15px; background:#f9f9f9;">
+      <div style="font-weight:bold; margin-bottom:8px; color:#333;">
+        <i class="icon icon-shield" style="margin-right:5px;"></i> <%:Firewall Backend%>
+      </div>
+      <div style="font-size:18px; font-weight:bold; color:#31708f;">
+        <%=backend:upper()%>
+      </div>
+      <div style="font-size:12px; color:#666;">
+        <%:Poll Interval%>: <%=poll_interval%>s
+      </div>
+    </div>
+    
+    <!-- Devices Card -->
+    <div style="border:1px solid #ddd; border-radius:6px; padding:15px; background:#f9f9f9;">
+      <div style="font-weight:bold; margin-bottom:8px; color:#333;">
+        <i class="icon icon-laptop" style="margin-right:5px;"></i> <%:Devices%>
+      </div>
+      <div style="font-size:18px; font-weight:bold; color:#8a6d3b;">
+        <%=total_devices%> total
+      </div>
+      <div style="font-size:12px; color:#666;">
+        <%=enabled_devices%> enabled, <%=devices_with_quota%> with quota, <%=blocked_devices%> blocked
+      </div>
+    </div>
+    
+    <!-- Storage Card -->
+    <div style="border:1px solid #ddd; border-radius:6px; padding:15px; background:#f9f9f9;">
+      <div style="font-weight:bold; margin-bottom:8px; color:#333;">
+        <i class="icon icon-hdd" style="margin-right:5px;"></i> <%:Storage%>
+      </div>
+      <div style="font-size:14px; margin-bottom:3px;">
+        <span style="color:#333;">Log:</span>
+        <span style="float:right; font-weight:bold;">
+          <%=log_exists and string.format("%.1f KB", log_size/1024) or "None"%>
+        </span>
+      </div>
+      <div style="font-size:14px;">
+        <span style="color:#333;">DB:</span>
+        <span style="float:right; font-weight:bold;">
+          <%=db_exists and string.format("%.1f KB", db_size/1024) or "None"%>
+        </span>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- Service Control Buttons -->
+  <div style="margin-bottom:20px;">
+    <% if enabled == "1" and not running then %>
+      <div style="background:#f2dede; color:#a94442; padding:12px 15px; border-radius:6px; margin-bottom:15px; border-left:4px solid #a94442;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <strong><i class="icon icon-warning" style="margin-right:8px;"></i><%:Warning%>:</strong>
+            Service is enabled but not running. Click "Start Service" to start it.
+          </div>
+          <button class="btn cbi-button cbi-button-action" onclick="controlService('start')" style="min-width:120px;">
+            <i class="icon icon-play" style="margin-right:5px;"></i> <%:Start Service%>
+          </button>
+        </div>
+        <% if not init_enabled then %>
+          <div style="margin-top:8px; font-size:13px; color:#a94442;">
+            <i class="icon icon-info" style="margin-right:5px;"></i>
+            <%:Service is not enabled to start on boot. Enable it in System → Startup.%>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <% if running then %>
+      <div style="background:#dff0d8; color:#3c763d; padding:12px 15px; border-radius:6px; margin-bottom:15px; border-left:4px solid #3c763d;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <strong><i class="icon icon-check" style="margin-right:8px;"></i><%:Service Running%>:</strong>
+            PID: <%=daemon_pid%> | Uptime: <%=uptime%>
+          </div>
+          <div>
+            <button class="btn cbi-button cbi-button-action" onclick="controlService('restart')" style="min-width:120px; margin-right:10px;">
+              <i class="icon icon-refresh" style="margin-right:5px;"></i> <%:Restart%>
+            </button>
+            <button class="btn cbi-button cbi-button-reset" onclick="controlService('stop')" style="min-width:120px;">
+              <i class="icon icon-stop" style="margin-right:5px;"></i> <%:Stop%>
+            </button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    
+    <!-- Quick Actions -->
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn cbi-button" onclick="runCommand('status')" style="min-width:140px;">
+        <i class="icon icon-info" style="margin-right:5px;"></i> <%:Check Status%>
+      </button>
+      <button class="btn cbi-button" onclick="runCommand('devices')" style="min-width:140px;">
+        <i class="icon icon-search" style="margin-right:5px;"></i> <%:Scan Devices%>
+      </button>
+      <button class="btn cbi-button" onclick="runCommand('debug')" style="min-width:140px;">
+        <i class="icon icon-bug" style="margin-right:5px;"></i> <%:Debug Info%>
+      </button>
+      <button class="btn cbi-button" onclick="clearLog()" style="min-width:140px;">
+        <i class="icon icon-trash" style="margin-right:5px;"></i> <%:Clear Log%>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Last Log Entry (if any) -->
+  <% 
+  local last_log = ""
+  if log_exists and log_lines > 0 then
+      local tail_cmd = string.format("tail -1 '%s' 2>/dev/null", log_file)
+      last_log = sys.exec(tail_cmd) or ""
+  end
+  %>
+  
+  <% if last_log ~= "" then %>
+    <div style="background:#f8f9fa; border:1px solid #eee; border-radius:6px; padding:12px 15px; margin-top:15px;">
+      <div style="font-weight:bold; margin-bottom:8px; color:#333; display:flex; justify-content:space-between; align-items:center;">
+        <span><i class="icon icon-file-text" style="margin-right:5px;"></i> <%:Last Log Entry%></span>
+        <span style="font-size:12px; font-weight:normal; color:#666;">
+          <%:Total%>: <%=log_lines%> <%:lines%> (<%=string.format("%.1f", log_size/1024)%> KB)
+        </span>
+      </div>
+      <div style="font-family:'Courier New',monospace; font-size:12px; background:#fff; padding:10px; border-radius:4px; border:1px solid #ddd; overflow-x:auto;">
+        <%=last_log%>
+      </div>
+    </div>
+  <% end %>
+  
+</div>
+
+<script>
+// Service control functions
+function controlService(action) {
+    var url = '<%=luci.dispatcher.build_url("admin/services/quotalimiter")%>/' + action;
+    
+    if (action === 'stop') {
+        if (!confirm('<%:Are you sure you want to stop the service?%>')) {
+            return;
+        }
+    }
+    
+    var button = event.target;
+    var originalText = button.innerHTML;
+    
+    // Show loading
+    button.innerHTML = '<i class="icon icon-spinner icon-spin" style="margin-right:5px;"></i> ' + 
+                      (action === 'start' ? '<%:Starting...%>' : 
+                       action === 'stop' ? '<%:Stopping...%>' : 
+                       '<%:Restarting...%>');
+    button.disabled = true;
+    
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            console.log(action + ' response:', data);
+            
+            // Show success message
+            showMessage(action.charAt(0).toUpperCase() + action.slice(1) + ' completed', 'success');
+            
+            // Reload page after delay
+            setTimeout(function() {
+                window.location.reload();
+            }, 1500);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessage('Failed to ' + action + ' service', 'error');
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+}
+
+// Run command and show output
+function runCommand(command) {
+    var modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    `;
+    
+    var content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 800px;
+        max-height: 80%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    `;
+    
+    var header = document.createElement('div');
+    header.style.cssText = `
+        background: #f5f5f5;
+        padding: 15px 20px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    `;
+    
+    header.innerHTML = `
+        <h4 style="margin:0;">
+            <i class="icon icon-terminal" style="margin-right:8px;"></i>
+            ${command.toUpperCase()} Command Output
+        </h4>
+        <button onclick="this.closest('.modal').remove()" style="background:none; border:none; font-size:20px; cursor:pointer; color:#666;">&times;</button>
+    `;
+    
+    var output = document.createElement('textarea');
+    output.style.cssText = `
+        flex: 1;
+        padding: 15px;
+        border: none;
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        resize: none;
+        background: #f8f9fa;
+    `;
+    output.readOnly = true;
+    output.value = 'Running ' + command + '...';
+    
+    var footer = document.createElement('div');
+    footer.style.cssText = `
+        padding: 10px 20px;
+        border-top: 1px solid #ddd;
+        background: #f5f5f5;
+        display: flex;
+        justify-content: flex-end;
+    `;
+    
+    footer.innerHTML = `
+        <button onclick="this.closest('.modal').remove()" class="btn cbi-button">Close</button>
+    `;
+    
+    content.appendChild(header);
+    content.appendChild(output);
+    content.appendChild(footer);
+    modal.appendChild(content);
+    modal.classList.add('modal');
+    document.body.appendChild(modal);
+    
+    // Execute command via AJAX
+    fetch('<%=luci.dispatcher.build_url("admin/services/quotalimiter")%>/log?command=' + command)
+        .then(response => response.text())
+        .then(data => {
+            output.value = data;
+        })
+        .catch(error => {
+            output.value = 'Error: ' + error;
+        });
+}
+
+// Clear log function
+function clearLog() {
+    if (confirm('<%:Are you sure you want to clear the log file?%>')) {
+        fetch('<%=luci.dispatcher.build_url("admin/services/quotalimiter/clear_log")%>')
+            .then(() => {
+                showMessage('Log cleared successfully', 'success');
+                setTimeout(() => location.reload(), 1000);
+            })
+            .catch(error => {
+                showMessage('Failed to clear log: ' + error, 'error');
+            });
+    }
+}
+
+// Show message toast
+function showMessage(text, type) {
+    var toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    if (type === 'success') {
+        toast.style.background = '#3c763d';
+    } else if (type === 'error') {
+        toast.style.background = '#a94442';
+    } else {
+        toast.style.background = '#31708f';
+    }
+    
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// CSS animations
+var style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    .btn.cbi-button {
+        transition: all 0.2s ease;
+    }
+    .btn.cbi-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .btn.cbi-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+`;
+document.head.appendChild(style);
+
+// Auto-refresh status every 30 seconds if service is running
+<% if running then %>
+setTimeout(() => {
+    location.reload();
+}, 30000);
+<% end %>
+</script>

@@ -1,0 +1,12 @@
+{
+	"luci-app-FamilyControl": {
+		"description": "Grant UCI Internet family control for luci-app-FamilyControl",
+		"read": {
+			"uci": [ "familycontrol" ]
+		},
+		"write": {
+			"uci": [ "familycontrol" ]
+		}
+	}
+}
+

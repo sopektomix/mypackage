@@ -1,0 +1,19 @@
+{
+	"luci-app-quotalimiter": {
+		"description": "Grant access to QuotaLimiter",
+		"read": {
+			"uci": ["quotalimiter"],
+			"file": {
+				"/var/log/quotalimiter.log": ["read"],
+				"/var/lib/quotalimiter.db": ["read"]
+			}
+		},
+		"write": {
+			"uci": ["quotalimiter"],
+			"file": {
+				"/var/log/quotalimiter.log": ["write"],
+				"/var/lib/quotalimiter.db": ["write"]
+			}
+		}
+	}
+}
